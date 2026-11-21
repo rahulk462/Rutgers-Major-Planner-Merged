@@ -16,7 +16,7 @@
 </form>
 
 {% if majors|length < 2 %}
-<p class="muted">Pick two or three majors above, or tick them on the <a href="{{ url_for('outcomes.home') }}">search page</a>.</p>
+<p class="muted" id="compare-empty">Pick two or three majors above, or tick them on the <a href="{{ url_for('outcomes.home') }}">search page</a>.</p>
 {% endif %}
 
 {% if majors %}
@@ -65,11 +65,18 @@
   {% for key in ['scorecard','pseo','fds','nyfed','bls','nace'] %}{{ caveat_block(caveats[key]) }}{% endfor %}
 </section>
 {% endif %}
+{% if static_site %}
+{# GitHub Pages copy: no server to render ?c=..., so compare.js builds the same table in the browser. #}
+<div id="static-compare" data-src="{{ url_for('static', filename='outcomes/') }}" data-major="{{ url_for('outcomes.major', cip4='CIP')|replace('CIP', '') }}"></div>
+<template id="compare-caveats">{% for key in ['scorecard','pseo','fds','nyfed','bls','nace'] %}{{ caveat_block(caveats[key]) }}{% endfor %}</template>
+{% endif %}
 {% endblock %}
 {% block scripts %}
+{% if static_site %}<script src="{{ url_for('static', filename='compare.js') }}"></script>{% endif %}
 <script id="compare-data" type="application/json">{{ majors|tojson }}</script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+  if (window.RMPCompare) return window.RMPCompare.init();
   window.MTO.compareChart('compare-chart', JSON.parse(document.getElementById('compare-data').textContent));
   window.MTO.initCompareForm('compare-form', 'compare-c');
 });

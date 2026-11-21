@@ -1,0 +1,19 @@
+/* "Runs on: This browser / My computer" switch on the GitHub Pages copy of the tool pages. */
+.rmp-backend {
+  --rmp-bg: #faf9f6; --rmp-line: #e2e0da; --rmp-ink: #1c1c1e; --rmp-muted: #5f5e5a; --rmp-bad: #b3261e;
+  background: var(--rmp-bg); border-bottom: 1px solid var(--rmp-line); color: var(--rmp-ink);
+  font: 13.5px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px;
+  padding: 8px max(16px, calc((100% - 1240px) / 2 + 16px));
+}
+@media (prefers-color-scheme: dark) {
+  .rmp-backend { --rmp-bg: #222225; --rmp-line: #333336; --rmp-ink: #ececef; --rmp-muted: #a8a7a0; --rmp-bad: #ff8a80; }
+}
+.rmp-backend * { box-sizing: border-box; }
+.rmp-backend label { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; white-space: nowrap; }
+.rmp-backend .rmp-backend-label { font-weight: 650; }
+.rmp-backend .muted { color: var(--rmp-muted); }
+.rmp-backend .rmp-port input { width: 4.5em; font: inherit; padding: 2px 5px; border: 1px solid var(--rmp-line);
+  border-radius: 5px; background: transparent; color: inherit; }
+.rmp-backend .rmp-backend-note { color: var(--rmp-muted); flex: 1 1 260px; white-space: pre-wrap; }
+.rmp-backend .rmp-backend-note.bad { color: var(--rmp-bad); }

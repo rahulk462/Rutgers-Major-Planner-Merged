@@ -18,6 +18,9 @@ from urllib.parse import urlparse
 from flask import Flask, jsonify, render_template, request, url_for
 
 LOCAL_HOSTS = {"127.0.0.1", "localhost", "::1"}
+# The GitHub Pages copy of this site (see rutgers_planner/pages). `python run.py --pages` lets that
+# one website talk to this local server, so the What-If login and scraper work from the Pages copy.
+PAGES_ORIGIN = os.environ.get("RMP_PAGES_ORIGIN", "https://rahulk462.github.io")
 
 
 def allowed_hosts() -> set[str]:
@@ -70,11 +73,25 @@ def site_data() -> dict:
     }
 
 
-def create_app(plan_config: str | None = None, plan_time_limit: float = 30.0) -> Flask:
+def normalize_origin(origin: str) -> str:
+    u = urlparse(origin.strip())
+    if u.scheme not in ("http", "https") or not u.hostname:
+        raise ValueError(f"not an origin: {origin!r} (expected e.g. https://you.github.io)")
+    return f"{u.scheme}://{u.netloc}".lower()
+
+
+def create_app(plan_config: str | None = None, plan_time_limit: float = 30.0,
+               allow_origins: tuple[str, ...] | list[str] = ()) -> Flask:
+    """``allow_origins``: other websites (by exact origin) allowed to call this server's APIs.
+
+    Off by default. ``python run.py --pages`` adds the GitHub Pages copy of the site.
+    """
     from . import outcomes, tools
     from .programs import registry
 
     app = Flask(__name__)
+    app.config["ALLOW_ORIGINS"] = {normalize_origin(o) for o in allow_origins}
+    app.config["STATIC_SITE"] = False       # True only while rutgers_planner.pages builds the Pages copy
     app.config["PLAN_CONFIG"] = plan_config
     app.config["PLAN_TIME_LIMIT"] = plan_time_limit
     app.json.sort_keys = False
@@ -95,19 +112,45 @@ def create_app(plan_config: str | None = None, plan_time_limit: float = 30.0) ->
             return jsonify({"error": "forbidden host"}), 403
         origin = request.headers.get("Origin")
         if origin and urlparse(origin).hostname not in hosts:
-            return jsonify({"error": "forbidden origin"}), 403
+            if not cors_origin():
+                return jsonify({"error": "forbidden origin"}), 403
+            if request.method == "OPTIONS":            # CORS preflight from the Pages copy
+                return "", 204
         return None
+
+    def cors_origin() -> str | None:
+        """The request's Origin if it is one you allowed (--pages / --allow-origin) and it calls an API."""
+        origin = request.headers.get("Origin")
+        if not origin or not app.config["ALLOW_ORIGINS"]:
+            return None
+        if not request.path.startswith(("/whatif/api/", "/plan/api/", "/api/")):
+            return None
+        try:
+            return origin if normalize_origin(origin) in app.config["ALLOW_ORIGINS"] else None
+        except ValueError:
+            return None
 
     @app.after_request
     def headers(resp):
         resp.headers.setdefault("X-Content-Type-Options", "nosniff")
+        origin = cors_origin()
+        if origin:
+            resp.headers["Access-Control-Allow-Origin"] = origin
+            resp.headers["Vary"] = "Origin"
+            if request.method == "OPTIONS":
+                resp.headers["Access-Control-Allow-Methods"] = "GET, POST"
+                resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
+                # Chrome asks before a public website may reach a server on your own computer.
+                resp.headers["Access-Control-Allow-Private-Network"] = "true"
+                resp.headers["Access-Control-Max-Age"] = "600"
         if request.path.startswith(("/whatif/api", "/plan/api")):
             resp.headers["Cache-Control"] = "no-store"
         return resp
 
     @app.context_processor
     def inject_nav():
-        return {"nav_items": nav_items(), "active": getattr(request, "blueprint", None) or "home"}
+        return {"nav_items": nav_items(), "active": getattr(request, "blueprint", None) or "home",
+                "static_site": app.config["STATIC_SITE"]}
 
     @app.route("/")
     def home():
