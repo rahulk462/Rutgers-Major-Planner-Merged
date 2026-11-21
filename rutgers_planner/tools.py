@@ -27,6 +27,10 @@ def tool_page(page: Path, api_prefix: str, active: str, title: str) -> str:
     data = json.dumps(site_data()).replace("</", "<\\/")
     head = (f'<link rel="stylesheet" href="{url_for("static", filename="nav.css")}">\n'
             f'<script>window.RMP = {data};</script>\n')
+    if current_app.config.get("STATIC_SITE"):
+        # GitHub Pages copy: the API calls run in the browser (Pyodide) or go to your own computer.
+        head += (f'<link rel="stylesheet" href="{url_for("static", filename="backend.css")}">\n'
+                 f'<script src="{url_for("static", filename="backend.js")}"></script>\n')
     html = html.replace('<html lang="en">', f'<html lang="en" data-api="{api_prefix}">', 1)
     html = html.replace("</title>", " · Rutgers Major Planner</title>", 1)
     html = html.replace("</head>", head + "</head>", 1)
@@ -44,7 +48,7 @@ def _json_body() -> dict | None:
 @whatif_bp.route("/")
 def page():
     from rutgers_whatif import web
-    return tool_page(web.PAGE, "/whatif", "whatif", "What-if majors")
+    return tool_page(web.PAGE, url_for("whatif.page").rstrip("/"), "whatif", "What-if majors")
 
 
 @whatif_bp.route("/api/<path:sub>", methods=["GET"])
@@ -93,7 +97,7 @@ def _guard(fn):
 @planner_bp.route("/")
 def page():  # noqa: F811 - one `page` endpoint per blueprint
     from gradplan.web import STATIC
-    return tool_page(STATIC / "index.html", "/plan", "planner", "Graduation plan")
+    return tool_page(STATIC / "index.html", url_for("planner.page").rstrip("/"), "planner", "Graduation plan")
 
 
 @planner_bp.route("/api/setup")

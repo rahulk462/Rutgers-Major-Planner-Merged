@@ -6,6 +6,6 @@
       <a href="{{ href }}"{% if key == active %} aria-current="page"{% endif %}>{% if step %}<span class="rmp-step">{{ step }}</span>{% endif %}{{ label }}</a>
       {% endfor %}
     </nav>
-    <span class="rmp-note">Rutgers–New Brunswick · runs on your computer</span>
+    <span class="rmp-note">Rutgers–New Brunswick · {{ "runs in your browser" if static_site else "runs on your computer" }}</span>
   </div>
 </div>

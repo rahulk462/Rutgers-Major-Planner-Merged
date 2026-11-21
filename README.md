@@ -50,6 +50,32 @@ heuristic selection and the greedy scheduler, and says so on every plan.
 The site listens on 127.0.0.1 only and refuses requests for any other host name or from other
 websites, because the What-If tool holds your Degree Navigator session.
 
+## Use it on GitHub Pages
+
+The site is also published at **https://rahulk462.github.io/Rutgers-Major-Planner-Merged/**
+(rebuilt by `.github/workflows/pages.yml` on every push to `main`). GitHub Pages only serves files,
+so the What-if and Graduation plan pages have a **Runs on** switch at the top:
+
+| | This browser (default) | My computer |
+|---|---|---|
+| Setup | none | `python run.py --pages` running locally |
+| How it works | the same Python code runs in the page ([Pyodide](https://pyodide.org), served from this site, ~15 MB on first visit) | the page sends its API calls to `http://127.0.0.1:5000` |
+| Career outcomes, what-if, course lookup, CSV import, AP credit, plans | yes | yes |
+| Degree Navigator login / discover / scrape, SOC downloads | no (a web page can't open that window) | yes |
+| Optimal CP-SAT plans | no, greedy planner | yes, if OR-Tools is installed |
+| Where your record lives | this browser's storage (IndexedDB), never uploaded | `personal/` on your computer |
+
+`--pages` lets exactly `https://rahulk462.github.io` call the local APIs (`--allow-origin URL` adds
+another site, `RMP_PAGES_ORIGIN` changes the default). Without it the local server still refuses
+every other website. Chrome may ask once to let the page reach devices on your network; allow it.
+Use Chrome, Edge or Firefox for "My computer" (Safari blocks https pages from calling `http://127.0.0.1`).
+Different port: `python run.py --pages --port 8080`, then type 8080 next to "My computer".
+
+**One-time setup:** in the repo's *Settings → Pages*, set *Source* to **GitHub Actions**. Build it
+yourself with `python -m rutgers_planner.pages --out _site --fetch-pyodide --base /` and serve
+`_site/` with any static server. The build packs only git-tracked files and renders with an empty
+record, so nothing in `personal/` is ever published.
+
 ### Getting your record in
 
 On **What-if majors**: *Log in* opens a separate browser window where you sign in with NetID + Duo
@@ -69,7 +95,8 @@ python -m gradplan plan --config config/my-record.yaml             # plan from y
 python -m gradplan plan                                            # sample transcript (config/example.yaml)
 python -m gradplan whatif                                          # compare program combinations
 python -m pipeline.build                                           # rebuild outcomes data (needs .[pipeline])
-pytest -q                                                          # all tests (101)
+python -m rutgers_planner.pages --out _site --fetch-pyodide        # GitHub Pages build
+pytest -q                                                          # all tests
 ```
 
 `python -m rutgers_whatif serve` and `python -m gradplan serve` still start the old single-tool pages.
@@ -81,6 +108,8 @@ rutgers_planner/   the website: Flask app, shared nav, home page, outcomes pages
   tools.py         serves the What-If and planner pages and their JSON APIs under /whatif and /plan
   outcomes.py      career-outcomes pages and /outcomes/api
   programs.py      program ids <-> tools <-> CIP codes
+  pages/           GitHub Pages build, Pyodide download, and the in-browser API (browser_api.py)
+  static/          shared CSS/JS; backend.js + pyworker.js run the tool pages on GitHub Pages
 rutgers_whatif/    Degree Navigator login, scraping, parsing, what-if engine (programs/*.json)
 gradplan/          prerequisites, offering patterns, course selection, CP-SAT / greedy scheduling
 pipeline/          downloads and joins the outcomes sources into data/processed/

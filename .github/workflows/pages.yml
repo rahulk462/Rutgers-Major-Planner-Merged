@@ -1,0 +1,50 @@
+# Publishes the site to GitHub Pages on every push to main (and on demand from the Actions tab).
+# One-time setup: Settings -> Pages -> Build and deployment -> Source: "GitHub Actions".
+name: GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install what the build needs
+        run: pip install "flask>=3.0" "pyyaml>=6" "beautifulsoup4>=4.12" "httpx>=0.27" "pytest>=8"
+      - name: Test the Pages build
+        run: python -m pytest -q tests/site
+      - uses: actions/cache@v4
+        with:
+          path: .cache/pyodide
+          key: pyodide-${{ hashFiles('rutgers_planner/pages/fetch_pyodide.py') }}
+      - name: Build the site
+        run: python -m rutgers_planner.pages --out _site --fetch-pyodide
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
