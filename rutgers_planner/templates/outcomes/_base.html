@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block head %}
+  <script src="{{ url_for('static', filename='vendor/chart-4.4.1.umd.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='charts.js') }}" defer></script>
+{% endblock %}
+{% block subnav %}
+<nav class="subnav" aria-label="Career outcomes">
+  <a href="{{ url_for('outcomes.home') }}"{% if request.endpoint == 'outcomes.home' %} aria-current="page"{% endif %}>Search majors</a>
+  <a href="{{ url_for('outcomes.compare') }}"{% if request.endpoint == 'outcomes.compare' %} aria-current="page"{% endif %}>Compare</a>
+  <a href="{{ url_for('outcomes.sources') }}"{% if request.endpoint == 'outcomes.sources' %} aria-current="page"{% endif %}>Sources &amp; caveats</a>
+</nav>
+{% endblock %}
+{% block footer %}
+<p>{{ meta.institution }} only. Camden and Newark campuses are not included.
+  Data built {{ meta.built }} from College Scorecard, Census PSEO, the Rutgers First-Destination Survey,
+  the NY Fed, BLS and NACE. See <a href="{{ url_for('outcomes.sources') }}">sources &amp; caveats</a>.</p>
+{% endblock %}

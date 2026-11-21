@@ -1,0 +1,6 @@
+# Hand fixes for prerequisites the parser flagged (or that the SOC text gets wrong).
+# Syntax: course codes, and, or, parentheses; coreq:CODE = may be taken the same term;
+# CODE+ = that course or any higher-numbered one in the same subject; "none" = no prerequisites.
+overrides:
+  # 01:750:205: "01:750:203 and coreq:01:750:204"
+  # 01:750:206: "01:750:204 and coreq:01:750:205"

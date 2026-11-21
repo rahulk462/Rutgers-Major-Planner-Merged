@@ -1,0 +1,77 @@
+{% extends "outcomes/_base.html" %}
+{% from "outcomes/_macros.html" import caveat_block %}
+{% block title %}Compare majors{% endblock %}
+{% block content %}
+<h1>Compare majors side by side</h1>
+<form class="compare-form" method="get" action="{{ url_for('outcomes.compare') }}" id="compare-form">
+  {% for i in range(max_compare) %}
+  <label><span class="sr-only">Major {{ i + 1 }}</span>
+    <select name="pick">
+      <option value="">{{ 'Choose a major' if i < 2 else 'Optional third major' }}</option>
+      {% for r in all_rows %}<option value="{{ r.cip4 }}" {% if majors|length > i and majors[i].cip4 == r.cip4 %}selected{% endif %}>{{ r.title }} ({{ r.cip4 }}){% if r.rutgers_majors %} · {{ r.rutgers_majors[:2]|join(', ') }}{% endif %}</option>{% endfor %}
+    </select></label>
+  {% endfor %}
+  <input type="hidden" name="c" id="compare-c">
+  <button class="button" type="submit">Compare</button>
+</form>
+
+{% if majors|length < 2 %}
+<p class="muted">Pick two or three majors above, or tick them on the <a href="{{ url_for('outcomes.home') }}">search page</a>.</p>
+{% endif %}
+
+{% if majors %}
+<section class="panel">
+  <h2>Earnings over time</h2>
+  <p class="muted">Rutgers–NB medians. Solid lines: College Scorecard (1, 4, 5, 7 years). Dashed: Census PSEO (1, 5, 10 years).</p>
+  <div class="chart-box"><canvas id="compare-chart" role="img" aria-label="Earnings comparison chart"></canvas></div>
+</section>
+
+<section class="panel">
+  <div class="table-scroll">
+  <table class="data-table compare-table">
+    <thead><tr><th></th>{% for m in majors %}<th><span class="swatch s{{ loop.index }}"></span><a href="{{ url_for('outcomes.major', cip4=m.cip4) }}">{{ m.title }}</a><div class="muted small">CIP {{ m.cip4 }}</div></th>{% endfor %}</tr></thead>
+    <tbody>
+      {% macro row(label, vals, fmt='money') %}<tr><th scope="row">{{ label }}</th>{% for v in vals %}<td class="num">{% if fmt == 'money' %}{{ v|money }}{% elif fmt == 'pct' %}{{ v|pct(1) }}{% elif fmt == 'signed' %}{% if v is not none %}{{ '%+.1f'|format(v) }}%{% else %}—{% endif %}{% else %}{{ v if v is not none else '—' }}{% endif %}</td>{% endfor %}</tr>{% endmacro %}
+      <tr class="group"><th colspan="{{ majors|length + 1 }}">Earnings: College Scorecard (federal-aid recipients)</th></tr>
+      {{ row('RU–NB, 1 yr', majors|map(attribute='scorecard.rutgers')|map('default', {}, true)|map(attribute='earn_1yr')|list) }}
+      {{ row('National, 1 yr', majors|map(attribute='scorecard.national')|map('default', {}, true)|map(attribute='mdn_1yr')|list) }}
+      {{ row('RU–NB, 5 yr', majors|map(attribute='scorecard.rutgers')|map('default', {}, true)|map(attribute='earn_5yr')|list) }}
+      {{ row('National, 5 yr', majors|map(attribute='scorecard.national')|map('default', {}, true)|map(attribute='mdn_5yr')|list) }}
+      {{ row('Median debt', majors|map(attribute='scorecard.rutgers')|map('default', {}, true)|map(attribute='median_debt')|list) }}
+      <tr class="group"><th colspan="{{ majors|length + 1 }}">Earnings: Census PSEO (all grads in covered jobs)</th></tr>
+      {% for y, lab in [('y1','1 yr'),('y5','5 yr'),('y10','10 yr')] %}
+      <tr><th scope="row">RU–NB, {{ lab }}</th>{% for m in majors %}<td class="num">{{ ((m.pseo.rutgers or {})[y] or {}).p50|money }}</td>{% endfor %}</tr>
+      <tr><th scope="row">NJ statewide, {{ lab }}</th>{% for m in majors %}<td class="num muted">{{ ((m.pseo.nj or {})[y] or {}).p50|money }}</td>{% endfor %}</tr>
+      {% endfor %}
+      <tr><th scope="row">Employed 1 yr after (field)</th>{% for m in majors %}<td class="num">{{ ((m.pseo.flows or {}).employment or {}).get('y1', {}).get('employed_share')|pct }}</td>{% endfor %}</tr>
+      <tr><th scope="row">Top industry (field)</th>{% for m in majors %}<td>{% set ind = (m.pseo.flows or {}).industries or [] %}{{ ind[0].label if ind else '—' }}</td>{% endfor %}</tr>
+      <tr class="group"><th colspan="{{ majors|length + 1 }}">Rutgers First-Destination Survey</th></tr>
+      <tr><th scope="row">Starting salary</th>{% for m in majors %}{% set f = (m.fds.majors[0] if m.fds.majors else m.fds.school) %}<td class="num">{% if f %}{{ f.median_salary|money }}<div class="muted small">{{ 'major' if m.fds.majors else m.fds.school_name }}, {{ f.class_year }}</div>{% else %}—{% endif %}</td>{% endfor %}</tr>
+      <tr><th scope="row">Knowledge rate</th>{% for m in majors %}{% set f = (m.fds.majors[0] if m.fds.majors else m.fds.school) %}<td class="num">{{ (f.knowledge_rate if f else None)|pct(1) }}</td>{% endfor %}</tr>
+      <tr><th scope="row">Top employers</th>{% for m in majors %}{% set f = (m.fds.majors[0] if m.fds.majors else m.fds.school) %}<td class="small">{{ (f.top_employers[:3]|join(', ')) if f else '—' }}</td>{% endfor %}</tr>
+      <tr class="group"><th colspan="{{ majors|length + 1 }}">National context</th></tr>
+      <tr><th scope="row">Unemployment, recent grads</th>{% for m in majors %}<td class="num">{{ (m.nyfed.unemployment_rate if m.nyfed else None)|pct(1) }}</td>{% endfor %}</tr>
+      <tr><th scope="row">Underemployment, recent grads</th>{% for m in majors %}<td class="num">{{ (m.nyfed.underemployment_rate if m.nyfed else None)|pct(1) }}</td>{% endfor %}</tr>
+      <tr><th scope="row">Mid-career wage (national)</th>{% for m in majors %}<td class="num">{{ (m.nyfed.wage_mid if m.nyfed else None)|money }}</td>{% endfor %}</tr>
+      <tr><th scope="row">Job growth, linked occupations</th>{% for m in majors %}<td class="num">{% if m.bls and m.bls.growth_pct is not none %}{{ '%+.1f'|format(m.bls.growth_pct) }}%{% else %}—{% endif %}</td>{% endfor %}</tr>
+      <tr><th scope="row">NACE 2026 avg. starting salary</th>{% for m in majors %}<td class="num">{{ (m.nace.avg_starting_salary if m.nace else None)|money }}{% if m.nace %}<div class="muted small">{{ m.nace.category }}</div>{% endif %}</td>{% endfor %}</tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Caveats</h2>
+  {% for key in ['scorecard','pseo','fds','nyfed','bls','nace'] %}{{ caveat_block(caveats[key]) }}{% endfor %}
+</section>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script id="compare-data" type="application/json">{{ majors|tojson }}</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  window.MTO.compareChart('compare-chart', JSON.parse(document.getElementById('compare-data').textContent));
+  window.MTO.initCompareForm('compare-form', 'compare-c');
+});
+</script>
+{% endblock %}

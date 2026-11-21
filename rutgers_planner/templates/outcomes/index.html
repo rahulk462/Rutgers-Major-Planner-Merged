@@ -1,0 +1,76 @@
+{% extends "outcomes/_base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>What happens after you graduate?</h1>
+  <p class="lede">Earnings, employment, top employers and job growth for each Rutgers–New Brunswick bachelor's major,
+    next to the national picture. Majors are grouped by federal CIP code so every source lines up.</p>
+  {% set o = meta.fds_overall %}
+  {% if o %}
+  <div class="tiles">
+    <div class="tile"><span class="tile-label">Median starting salary, all RU–NB grads</span>
+      <span class="tile-value">{{ o.median_salary|money }}</span>
+      <span class="tile-note">Class of {{ o.class_year }} survey · n = {{ o.salary_n|num }}</span></div>
+    <div class="tile"><span class="tile-label">Career outcomes rate</span>
+      <span class="tile-value">{{ o.outcomes_rate|pct }}</span>
+      <span class="tile-note">employed, in school, or service within 6 months</span></div>
+    <div class="tile"><span class="tile-label">Knowledge rate</span>
+      <span class="tile-value">{{ o.knowledge_rate|pct(1) }}</span>
+      <span class="tile-note">share of grads with a known outcome</span></div>
+  </div>
+  {% endif %}
+</section>
+
+<section>
+  <div class="toolbar">
+    <label class="search">
+      <span class="sr-only">Search majors</span>
+      <input id="q" type="search" placeholder="Search a major, e.g. computer science, nursing, 52.08" autocomplete="off">
+    </label>
+    <label class="check"><input type="checkbox" id="only-earn" checked> Only majors with Rutgers earnings</label>
+    <a id="compare-btn" class="button" href="{{ url_for('outcomes.compare') }}" aria-disabled="true">Compare selected (0)</a>
+  </div>
+  <p class="hint">Tick up to 3 majors to compare them side by side. Click a column header to sort.</p>
+
+  <div class="table-scroll">
+  <table id="majors" class="data-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th data-sort="title">Major (CIP)</th>
+        <th data-sort="rutgers_1yr" class="num">RU–NB, 1 yr</th>
+        <th data-sort="national_1yr" class="num">National, 1 yr</th>
+        <th data-sort="rutgers_5yr" class="num">RU–NB, 5 yr</th>
+        <th data-sort="pseo_y10" class="num">RU–NB, 10 yr<sup>†</sup></th>
+        <th data-sort="growth_pct" class="num">Job growth<sup>‡</sup></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for r in rows %}
+      <tr data-cip="{{ r.cip4 }}" data-search="{{ (r.cip4 ~ ' ' ~ r.title ~ ' ' ~ r.rutgers_majors|join(' ') ~ ' ' ~ r.cip2_title)|lower }}"
+          data-has-earn="{{ 1 if (r.rutgers_1yr or r.rutgers_5yr or r.pseo_y10) else 0 }}"
+          {% for k in ['rutgers_1yr','national_1yr','rutgers_5yr','pseo_y10','growth_pct'] %} data-{{ k }}="{{ r[k] if r[k] is not none else '' }}"{% endfor %}
+          data-title="{{ r.title }}">
+        <td><input type="checkbox" class="pick" aria-label="Compare {{ r.title }}"></td>
+        <td><a href="{{ url_for('outcomes.major', cip4=r.cip4) }}">{{ r.title }}</a> <span class="muted">{{ r.cip4 }}</span>
+          {% if r.cip4 in plannable %}<span class="tag-plan" title="Requirements for this field are defined here, so you can run a what-if and plan graduation">plannable</span>{% endif %}
+          {% if r.rutgers_majors %}<div class="sub">{{ r.rutgers_majors|join(', ') }}</div>{% endif %}</td>
+        <td class="num">{{ r.rutgers_1yr|money }}</td>
+        <td class="num muted">{{ r.national_1yr|money }}</td>
+        <td class="num">{{ r.rutgers_5yr|money }}</td>
+        <td class="num">{{ r.pseo_y10|money }}</td>
+        <td class="num">{% if r.growth_pct is not none %}{{ '%+.1f'|format(r.growth_pct) }}%{% else %}—{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  <p class="footnote">1- and 5-year medians: College Scorecard (federal-aid recipients only). †10-year median: Census PSEO.
+    ‡BLS {{ meta.versions.bls|replace('Employment Projections ', '') }} projected growth for occupations linked to the major.
+    “—” means suppressed or not reported. <a href="{{ url_for('outcomes.sources') }}">Read the caveats.</a></p>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => window.MTO.initSearch({max: 3, compareUrl: "{{ url_for('outcomes.compare') }}"}));
+</script>
+{% endblock %}

@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Graduation Path Planner</title>
+<style>
+:root{--bg:#f6f6f4;--card:#fff;--ink:#1c1c1e;--muted:#68686e;--line:#e2e2de;--accent:#cc0033;--accent-ink:#fff;--accent-soft:#fbe6eb;
+  --risk:#a86200;--risk-soft:#fdf1df;--err:#c62828;--err-soft:#fde8e8;--ok:#2e7d32;--ok-soft:#e6f4e7;--chip:#efefeb;--focus:#cc003355}
+@media (prefers-color-scheme:dark){:root{--bg:#141415;--card:#1d1d1f;--ink:#ececec;--muted:#a1a1a7;--line:#323235;--accent:#ff4d6d;--accent-ink:#1a0007;--accent-soft:#3a1720;
+  --risk:#e6a54a;--risk-soft:#33270f;--err:#f07070;--err-soft:#3a1a1a;--ok:#74c278;--ok-soft:#183019;--chip:#29292c;--focus:#ff4d6d66}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:14.5px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button,input,select{font:inherit;color:inherit}
+header{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--card);position:sticky;top:0;z-index:5}
+header h1{font-size:17px;margin:0;font-weight:650}
+header .mark{width:26px;height:26px;border-radius:7px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:800;font-size:14px}
+header .spacer{flex:1}
+header .status{color:var(--muted);font-size:13px}
+.layout{display:grid;grid-template-columns:340px 1fr;min-height:calc(100vh - 56px)}
+aside{border-right:1px solid var(--line);background:var(--card);padding:16px 16px 90px;overflow:auto;max-height:calc(100vh - 56px);position:sticky;top:56px}
+main{padding:20px 24px 60px;min-width:0}
+fieldset{border:0;margin:0 0 18px;padding:0}
+legend{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:650;margin-bottom:8px;padding:0}
+label.f{display:block;font-size:13px;color:var(--muted);margin:0 0 4px}
+.row{display:flex;gap:10px}.row>*{flex:1;min-width:0}
+.field{margin-bottom:10px}
+input[type=text],input[type=number],select{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);outline:none}
+input:focus,select:focus,button:focus-visible{box-shadow:0 0 0 3px var(--focus);border-color:var(--accent)}
+.checks{display:flex;flex-direction:column;gap:2px}
+.check{display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:7px;cursor:pointer}
+.check:hover{background:var(--chip)}
+.check input{accent-color:var(--accent);width:16px;height:16px;margin:0}
+.check small{color:var(--muted);margin-left:auto;font-size:11.5px;white-space:nowrap}
+.toggle{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.toggle input{accent-color:var(--accent);width:16px;height:16px;margin:0}
+.toggle .cap{margin-left:auto;display:flex;align-items:center;gap:4px;color:var(--muted);font-size:12px}
+.toggle .cap input{padding:4px 6px;width:56px;flex:none}
+.chips{display:flex;flex-wrap:wrap;gap:5px;padding:5px;border:1px solid var(--line);border-radius:8px;background:var(--bg);min-height:38px;align-items:center}
+.chips input{border:0;background:transparent;flex:1;min-width:110px;padding:3px 4px;box-shadow:none!important}
+.chip{display:inline-flex;align-items:center;gap:4px;background:var(--chip);border-radius:6px;padding:2px 4px 2px 8px;font-size:12.5px;font-variant-numeric:tabular-nums}
+.chip button{border:0;background:none;cursor:pointer;color:var(--muted);padding:0 3px;font-size:14px;line-height:1}
+.lock{display:grid;grid-template-columns:1fr 120px 26px;gap:6px;margin-bottom:6px}
+.x{border:0;background:none;cursor:pointer;color:var(--muted);font-size:17px}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:7px 12px;cursor:pointer;font-weight:550}
+.btn:hover{background:var(--chip)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn.small{padding:4px 9px;font-size:13px}
+.btn:disabled{opacity:.55;cursor:progress}
+.actions{position:fixed;bottom:0;left:0;width:340px;padding:12px 16px;background:var(--card);border-top:1px solid var(--line);border-right:1px solid var(--line);display:flex;gap:8px;z-index:4}
+.actions .btn{flex:1}
+details summary{cursor:pointer;color:var(--muted);font-size:13px;margin-bottom:8px}
+.hint{color:var(--muted);font-size:12.5px;margin:4px 0 0}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:18px;overflow-x:auto}
+.tab{border:0;background:none;padding:9px 12px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;font-weight:550;white-space:nowrap}
+.tab.on{color:var(--ink);border-bottom-color:var(--accent)}
+.tab .n{background:var(--chip);border-radius:10px;padding:0 7px;font-size:12px;margin-left:4px}
+.tab .n.err{background:var(--err-soft);color:var(--err)}.tab .n.risk{background:var(--risk-soft);color:var(--risk)}
+.pane{display:none}.pane.on{display:block}
+.head{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.head h2{font-size:20px;margin:0 0 2px}.head p{margin:0;color:var(--muted)}
+.head .dl{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:20px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 13px}
+.stat b{display:block;font-size:21px;font-variant-numeric:tabular-nums;line-height:1.25}
+.stat span{color:var(--muted);font-size:12.5px}
+.stat.ok b{color:var(--ok)}.stat.bad b{color:var(--err)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.term{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 12px 6px}
+.term h3{margin:0 0 6px;font-size:14.5px;display:flex;justify-content:space-between;align-items:baseline}
+.term h3 small{font-weight:600;font-variant-numeric:tabular-nums}
+.term h3 small.over{color:var(--err)}
+.term.offseason{border-style:dashed}
+.c{padding:7px 0 7px;border-top:1px solid var(--line);font-size:13.5px;cursor:pointer}
+.c:first-of-type{border-top:0}
+.c .top{display:flex;gap:6px;align-items:baseline}
+.c .code{font-variant-numeric:tabular-nums;font-weight:650;white-space:nowrap}
+.c .cr{margin-left:auto;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.c .t{color:var(--muted);display:block}
+.c.crit{box-shadow:inset 3px 0 0 var(--accent);padding-left:9px;margin-left:-12px;padding-right:0}
+.c .more{display:none;font-size:12.5px;color:var(--muted);margin-top:5px;background:var(--bg);border-radius:7px;padding:6px 8px}
+.c.open .more{display:block}
+.tag{display:inline-block;background:var(--chip);border-radius:5px;padding:0 6px;font-size:11.5px;color:var(--muted);margin:3px 4px 0 0}
+.tag.cr{background:var(--accent-soft);color:var(--accent)}.tag.hard{background:var(--risk-soft);color:var(--risk)}
+.fill{color:var(--muted);font-style:italic;font-size:13px;padding:7px 0;border-top:1px solid var(--line)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.card h3{margin:0 0 8px;font-size:15px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:12.5px}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.wrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px}
+tr.click{cursor:pointer}tr.click:hover td{background:var(--chip)}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 0;border-top:1px solid var(--line)}
+.chain:first-of-type{border-top:0}
+.chain .node{background:var(--accent-soft);color:var(--accent);border-radius:6px;padding:2px 8px;font-weight:600;font-variant-numeric:tabular-nums;font-size:13px}
+.chain .arr{color:var(--muted)}
+.issue{display:flex;gap:10px;padding:9px 12px;border-radius:9px;margin-bottom:6px;font-size:13.5px}
+.issue b{text-transform:uppercase;font-size:11px;letter-spacing:.04em;padding-top:2px;min-width:38px}
+.issue.error{background:var(--err-soft)}.issue.error b{color:var(--err)}
+.issue.risk{background:var(--risk-soft)}.issue.risk b{color:var(--risk)}
+.issue.info{background:var(--card);border:1px solid var(--line)}.issue.info b{color:var(--muted)}
+.empty{color:var(--muted);text-align:center;padding:60px 20px}
+.empty h2{color:var(--ink);font-size:19px;margin:0 0 6px}
+.banner{padding:10px 14px;border-radius:10px;margin-bottom:14px;font-size:13.5px}
+.banner.err{background:var(--err-soft);color:var(--err)}
+.banner.note{background:var(--card);border:1px solid var(--line);color:var(--muted)}
+.scen{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:var(--card)}
+.scen .top{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.scen .top input{font-weight:600}
+.pills{display:flex;flex-wrap:wrap;gap:5px}
+.pill{border:1px solid var(--line);border-radius:14px;padding:2px 10px;font-size:12.5px;cursor:pointer;background:var(--bg);user-select:none}
+.pill.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.pos{color:var(--err)}.neg{color:var(--ok)}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:s .7s linear infinite;vertical-align:-2px}
+@keyframes s{to{transform:rotate(360deg)}}
+.caveat{color:var(--muted);font-size:12.5px;margin-top:26px;max-width:820px}
+a{color:var(--accent)}
+@media (max-width:860px){.layout{grid-template-columns:1fr}aside{position:static;max-height:none;border-right:0;border-bottom:1px solid var(--line);padding-bottom:16px}
+  .actions{position:static;width:auto;border:0;padding:12px 0 0}main{padding:16px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="mark">R</div>
+  <h1>Graduation Path Planner</h1>
+  <span class="spacer"></span>
+  <span class="status" id="status">Loading…</span>
+</header>
+<div class="layout">
+<aside>
+  <form id="form" autocomplete="off" onsubmit="return false">
+    <fieldset>
+      <legend>Record</legend>
+      <div class="field">
+        <label class="f" for="config">Config</label>
+        <select id="config"></select>
+        <p class="hint" id="recordHint"></p>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Programs</legend>
+      <div class="checks" id="programs"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Terms</legend>
+      <div class="row field">
+        <div><label class="f" for="start_term">First term to plan</label><select id="start_term"></select></div>
+        <div><label class="f" for="target_graduation">Target graduation</label><select id="target_graduation"></select></div>
+      </div>
+      <div class="row field">
+        <div><label class="f" for="min_credits">Min credits / term</label><input type="number" id="min_credits" min="0" max="30" step="0.5"></div>
+        <div><label class="f" for="max_credits">Max credits / term</label><input type="number" id="max_credits" min="1" max="30" step="0.5"></div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="summer"> Use summer sessions
+        <span class="cap">max <input type="number" id="summer_max_credits" min="0" max="16" step="0.5"></span></label>
+      <label class="toggle"><input type="checkbox" id="winter"> Use winter sessions
+        <span class="cap">max <input type="number" id="winter_max_credits" min="0" max="8" step="0.5"></span></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Locked courses</legend>
+      <div id="locks"></div>
+      <button type="button" class="btn small" id="addLock">+ Lock a course to a term</button>
+    </fieldset>
+
+    <fieldset>
+      <legend>Workload</legend>
+      <div class="field">
+        <label class="f">Hard courses to spread out</label>
+        <div class="chips" data-key="hard_courses"></div>
+      </div>
+      <div class="row field">
+        <div><label class="f" for="max_hard_per_term">Max hard / term</label><input type="number" id="max_hard_per_term" min="1" max="6" step="1"></div>
+        <div><label class="f" for="objective">Goal</label>
+          <select id="objective"><option value="min_terms">Graduate soonest</option><option value="balance">Balance workload</option></select></div>
+      </div>
+    </fieldset>
+
+    <details>
+      <summary>More options</summary>
+      <div class="field"><label class="f">Courses to include anyway</label><div class="chips" data-key="include"></div></div>
+      <div class="field"><label class="f">Never pick</label><div class="chips" data-key="exclude"></div></div>
+      <div class="field"><label class="f">Pick only if nothing else works</label><div class="chips" data-key="avoid"></div></div>
+      <div class="field"><label class="f">Prefer (tie-breakers)</label><div class="chips" data-key="prefer"></div></div>
+      <div class="row field">
+        <div><label class="f" for="solver">Scheduler</label>
+          <select id="solver"><option value="cpsat">CP-SAT (optimal)</option><option value="greedy">Greedy</option></select></div>
+        <div><label class="f" for="total_credits_required">Degree credits</label><input type="number" id="total_credits_required" min="0" max="200" step="1"></div>
+      </div>
+      <div class="row field">
+        <div><label class="f" for="offering_threshold">Offered if ran in ≥</label>
+          <select id="offering_threshold"><option value="0.34">⅓ of terms</option><option value="0.5">½ of terms</option><option value="0.67">⅔ of terms</option><option value="0.9">nearly all</option></select></div>
+        <div style="display:flex;align-items:flex-end"><label class="toggle" style="margin:0 0 8px"><input type="checkbox" id="fill_electives"> Fill open electives</label></div>
+      </div>
+      <button type="button" class="btn small" id="reset">Reset to the config file</button>
+    </details>
+  </form>
+  <datalist id="courseList"></datalist>
+  <div class="actions">
+    <button class="btn primary" id="runPlan">Build plan</button>
+    <button class="btn" id="runWhatif">Compare what-ifs</button>
+  </div>
+</aside>
+
+<main>
+  <div id="error"></div>
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-tab="plan">Plan</button>
+    <button class="tab" data-tab="critical">Critical path <span class="n" id="nCrit">–</span></button>
+    <button class="tab" data-tab="checks">Checks <span class="n" id="nChecks">–</span></button>
+    <button class="tab" data-tab="reqs">Requirements</button>
+    <button class="tab" data-tab="whatif">What-if</button>
+    <button class="tab" data-tab="record">My record</button>
+  </nav>
+
+  <section class="pane on" id="pane-plan"><div class="empty"><h2>No plan yet</h2>Pick your programs and preferences on the left, then press <b>Build plan</b>.</div></section>
+  <section class="pane" id="pane-critical"></section>
+  <section class="pane" id="pane-checks"></section>
+  <section class="pane" id="pane-reqs"></section>
+  <section class="pane" id="pane-whatif">
+    <div class="head"><div><h2>What-if comparison</h2><p>Plan several program combinations with the same preferences. The first scenario is the baseline.</p></div></div>
+    <div id="scenarios"></div>
+    <div style="display:flex;gap:8px;margin:4px 0 18px">
+      <button class="btn small" id="addScen">+ Add scenario</button>
+      <button class="btn small primary" id="runWhatif2">Run comparison</button>
+    </div>
+    <div id="whatifOut"></div>
+  </section>
+  <section class="pane" id="pane-record"></section>
+  <p class="caveat" id="caveat">Draft to bring to your advisor, not an official audit. Credit limits, overload rules and double-counting policies vary by school: check the catalog or the dean's office. Offering patterns are estimated from past Schedule of Classes terms and are a guess, not a guarantee.</p>
+</main>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = n => (typeof n === 'number' ? (Math.round(n * 10) / 10).toString() : esc(n));
+const store = {get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+let S = null;            // /api/setup response
+let chips = {};          // key -> array of codes
+let locks = [];          // [{code, term}]
+let scenarios = [];      // [{name, programs:[]}]
+let current = null;      // plan JSON being shown
+let titles = {};
+let programsFromUrlUsed = false;
+
+const NUM = ['min_credits','max_credits','summer_max_credits','winter_max_credits','max_hard_per_term','total_credits_required'];
+const SEL = ['start_term','target_graduation','objective','solver','offering_threshold'];
+const BOOL = ['summer','winter','fill_electives'];
+const CHIPS = ['hard_courses','include','exclude','avoid','prefer'];
+
+// Inside the merged site the page is served at /plan with its API under /plan/api and
+// window.RMP carrying the shared program list; standalone (`gradplan serve`) both are absent.
+const API = document.documentElement.dataset.api || '';
+const RMP = window.RMP || null;
+
+async function api(path, body) {
+  const r = await fetch(API + path, body ? {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)} : {});
+  const d = await r.json().catch(() => ({error: `HTTP ${r.status}`}));
+  if (!r.ok) throw new Error(d.error || `HTTP ${r.status}`);
+  return d;
+}
+
+function setStatus(t, busy) { $('status').innerHTML = busy ? `<span class="spin"></span> ${esc(t)}` : esc(t); }
+function showError(msg) { $('error').innerHTML = msg ? `<div class="banner err">${esc(msg)}</div>` : ''; }
+
+/* ---------- setup ---------- */
+async function load(configName) {
+  setStatus('Loading record…', true);
+  try { S = await api('/api/setup' + (configName ? `?config=${encodeURIComponent(configName)}` : '')); }
+  catch (e) { showError(e.message); setStatus('Error'); return; }
+  titles = Object.fromEntries(S.courses.map(c => [c.code, c.title]));
+  $('config').innerHTML = S.configs.map(c => `<option ${c === S.config ? 'selected' : ''}>${esc(c)}</option>`).join('');
+  $('courseList').innerHTML = S.courses.map(c => `<option value="${esc(c.code)}">${esc(c.title)}</option>`).join('');
+  const terms = S.terms.map(t => `<option>${esc(t)}</option>`).join('');
+  $('start_term').innerHTML = terms;
+  $('target_graduation').innerHTML = '<option value="">No target</option>' + terms;
+  const saved = store.get('gradplan:' + S.config);
+  const st = saved || fromConfig();
+  const want = (new URLSearchParams(location.search).get('programs') || '').split(',').filter(id => S.programs.some(p => p.id === id));
+  if (want.length && !programsFromUrlUsed) { st.programs = want; programsFromUrlUsed = true; }
+  applyState(st);
+  if (want.length) save();
+  const files = S.student.files;
+  const found = files.filter(f => f.found).length;
+  $('recordHint').textContent = `${S.student.taken.length} courses on record, ${fmt(S.student.credits_earned)} credits earned` +
+    (files.length ? ` · ${found}/${files.length} transcript files found` : '') + (saved ? ' · using your last settings' : '');
+  renderRecord();
+  setStatus(S.cpsat_available ? 'Ready' : 'Ready · OR-Tools not installed, using the greedy planner');
+}
+
+function fromConfig() {
+  const p = S.plan || {};
+  return {
+    programs: S.selected.slice(),
+    plan: Object.assign({}, p, {locked: p.locked || {}}),
+    scenarios: Object.entries(S.scenarios).map(([name, programs]) => ({name, programs})),
+  };
+}
+
+function applyState(st) {
+  const p = st.plan || {};
+  const progs = new Set(st.programs || []);
+  const kinds = {major: 'Majors', minor: 'Minors'};
+  let html = '', lastKind = null;
+  for (const pr of S.programs) {
+    if (pr.kind !== lastKind) { html += `<label class="f" style="margin-top:${lastKind ? 8 : 0}px">${esc(kinds[pr.kind] || pr.kind)}</label>`; lastKind = pr.kind; }
+    html += `<label class="check"><input type="checkbox" value="${esc(pr.id)}" ${progs.has(pr.id) ? 'checked' : ''}> ${esc(pr.name)}<small>${esc(pr.id)}</small></label>`;
+  }
+  $('programs').innerHTML = html;
+  for (const k of NUM) $(k).value = p[k] ?? '';
+  for (const k of BOOL) $(k).checked = !!p[k];
+  $('fill_electives').checked = p.fill_electives !== false;
+  for (const k of SEL) {
+    const el = $(k), v = p[k] == null ? '' : String(p[k]);
+    if (v && ![...el.options].some(o => o.value === v)) el.insertAdjacentHTML('beforeend', `<option>${esc(v)}</option>`);
+    el.value = v || (k === 'offering_threshold' ? '0.5' : k === 'solver' ? 'cpsat' : k === 'objective' ? 'min_terms' : '');
+  }
+  if (!p.start_term) $('start_term').value = 'Spring 2027';
+  const cp = $('solver').querySelector('option[value=cpsat]');
+  cp.disabled = !S.cpsat_available;
+  cp.textContent = S.cpsat_available ? 'CP-SAT (optimal)' : 'CP-SAT (install ortools)';
+  if (!S.cpsat_available) $('solver').value = 'greedy';
+  chips = {}; for (const k of CHIPS) chips[k] = (p[k] || []).map(String);
+  locks = Object.entries(p.locked || {}).map(([code, term]) => ({code, term}));
+  scenarios = (st.scenarios || []).map(s => ({name: s.name, programs: s.programs.slice()}));
+  renderChips(); renderLocks(); renderScenarios();
+}
+
+function collect() {
+  const plan = {};
+  for (const k of NUM) { const v = $(k).value; if (v !== '') plan[k] = Number(v); }
+  for (const k of BOOL) plan[k] = $(k).checked;
+  for (const k of SEL) plan[k] = $(k).value;
+  plan.offering_threshold = Number(plan.offering_threshold);
+  for (const k of CHIPS) plan[k] = chips[k].slice();
+  plan.locked = Object.fromEntries(locks.filter(l => l.code && l.term).map(l => [l.code, l.term]));
+  const programs = [...$('programs').querySelectorAll('input:checked')].map(i => i.value);
+  return {config: S.config, programs, plan};
+}
+function save() { if (S) { const b = collect(); store.set('gradplan:' + S.config, {programs: b.programs, plan: b.plan, scenarios}); } }
+
+/* ---------- chips, locks ---------- */
+function normCode(s) {
+  s = s.trim().replace(/\s+/g, '');
+  let m = s.match(/^(\d{2}):?(\d{3}):?(\d{3})$/); if (m) return `${m[1]}:${m[2]}:${m[3]}`;
+  m = s.match(/^(\d{3}):?(\d{3})$/); if (m) return `01:${m[1]}:${m[2]}`;
+  return s;
+}
+function renderChips() {
+  document.querySelectorAll('.chips').forEach(box => {
+    const k = box.dataset.key;
+    box.innerHTML = chips[k].map((c, i) => `<span class="chip" title="${esc(titles[c] || '')}">${esc(c)}<button type="button" data-i="${i}" aria-label="Remove ${esc(c)}">×</button></span>`).join('') +
+      `<input type="text" list="courseList" placeholder="${chips[k].length ? '' : 'e.g. 01:198:344'}" aria-label="Add course">`;
+    box.querySelectorAll('button').forEach(b => b.onclick = () => { chips[k].splice(+b.dataset.i, 1); renderChips(); save(); });
+    const inp = box.querySelector('input');
+    const add = () => { const v = normCode(inp.value); if (v && !chips[k].includes(v)) { chips[k].push(v); renderChips(); save(); box.querySelector('input').focus(); } else inp.value = ''; };
+    inp.onkeydown = e => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); add(); } else if (e.key === 'Backspace' && !inp.value && chips[k].length) { chips[k].pop(); renderChips(); save(); box.querySelector('input').focus(); } };
+    inp.onchange = () => { if (/^\d{2}:\d{3}:\d{3}$/.test(inp.value.trim())) add(); };
+  });
+}
+function renderLocks() {
+  const terms = S.terms.map(t => `<option>${esc(t)}</option>`).join('');
+  $('locks').innerHTML = locks.map((l, i) => `<div class="lock"><input type="text" list="courseList" value="${esc(l.code)}" data-i="${i}" placeholder="Course" aria-label="Locked course">
+     <select data-i="${i}" aria-label="Term">${terms}</select><button type="button" class="x" data-i="${i}" aria-label="Remove">×</button></div>`).join('');
+  $('locks').querySelectorAll('select').forEach(s => { s.value = locks[s.dataset.i].term || $('start_term').value; locks[s.dataset.i].term = s.value; s.onchange = () => { locks[s.dataset.i].term = s.value; save(); }; });
+  $('locks').querySelectorAll('input').forEach(s => s.onchange = () => { locks[s.dataset.i].code = normCode(s.value); s.value = locks[s.dataset.i].code; save(); });
+  $('locks').querySelectorAll('.x').forEach(b => b.onclick = () => { locks.splice(+b.dataset.i, 1); renderLocks(); save(); });
+}
+$('addLock').onclick = () => { locks.push({code: '', term: $('start_term').value}); renderLocks(); $('locks').querySelector('.lock:last-child input').focus(); };
+
+/* ---------- scenarios ---------- */
+function renderScenarios() {
+  $('scenarios').innerHTML = scenarios.map((s, i) => `<div class="scen"><div class="top">
+      <input type="text" value="${esc(s.name)}" data-i="${i}" aria-label="Scenario name">
+      ${i === 0 ? '<span class="tag">baseline</span>' : ''}
+      <button type="button" class="x" data-i="${i}" aria-label="Remove scenario">×</button></div>
+      <div class="pills">${S.programs.map(p => `<span class="pill ${s.programs.includes(p.id) ? 'on' : ''}" data-i="${i}" data-p="${esc(p.id)}" role="checkbox" aria-checked="${s.programs.includes(p.id)}" tabindex="0">${esc(p.name)}</span>`).join('')}</div></div>`).join('') ||
+    '<p class="hint">No scenarios yet.</p>';
+  $('scenarios').querySelectorAll('.top input').forEach(inp => inp.onchange = () => { scenarios[inp.dataset.i].name = inp.value.trim() || `Scenario ${+inp.dataset.i + 1}`; save(); });
+  $('scenarios').querySelectorAll('.x').forEach(b => b.onclick = () => { scenarios.splice(+b.dataset.i, 1); renderScenarios(); save(); });
+  $('scenarios').querySelectorAll('.pill').forEach(p => {
+    const tog = () => { const s = scenarios[p.dataset.i]; const j = s.programs.indexOf(p.dataset.p); j < 0 ? s.programs.push(p.dataset.p) : s.programs.splice(j, 1); renderScenarios(); save(); };
+    p.onclick = tog; p.onkeydown = e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); tog(); } };
+  });
+}
+$('addScen').onclick = () => { const b = collect(); scenarios.push({name: `Scenario ${scenarios.length + 1}`, programs: b.programs}); renderScenarios(); save(); };
+
+/* ---------- running ---------- */
+function busy(on) { ['runPlan', 'runWhatif', 'runWhatif2'].forEach(id => $(id).disabled = on); }
+
+async function runPlan() {
+  const body = collect();
+  if (!body.programs.length) return showError('Pick at least one program.');
+  showError(''); busy(true); setStatus('Building plan…', true);
+  const t0 = performance.now();
+  try {
+    current = await api('/api/plan', body);
+    renderPlanAll(current);
+    tab('plan');
+    setStatus(`Plan built in ${((performance.now() - t0) / 1000).toFixed(1)}s`);
+  } catch (e) { showError(e.message); setStatus('Error'); }
+  finally { busy(false); }
+}
+
+async function runWhatif() {
+  const body = collect();
+  body.scenarios = Object.fromEntries(scenarios.filter(s => s.programs.length).map(s => [s.name, s.programs]));
+  if (!Object.keys(body.scenarios).length) { tab('whatif'); return showError('Add a scenario with at least one program.'); }
+  showError(''); busy(true); tab('whatif');
+  setStatus(`Planning ${Object.keys(body.scenarios).length} scenarios…`, true);
+  $('whatifOut').innerHTML = '<p class="hint"><span class="spin"></span> Solving each scenario. This can take up to a minute.</p>';
+  try {
+    const d = await api('/api/whatif', body);
+    renderWhatif(d);
+    setStatus('Comparison done');
+  } catch (e) { showError(e.message); $('whatifOut').innerHTML = ''; setStatus('Error'); }
+  finally { busy(false); }
+}
+
+/* ---------- rendering ---------- */
+function download(name, text, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], {type}));
+  a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+function slug(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+
+function renderPlanAll(D, label) {
+  renderPlan(D, label); renderCritical(D); renderChecks(D); renderReqs(D);
+  const nErr = D.issues.filter(i => i.level === 'error').length, nRisk = D.issues.filter(i => i.level === 'risk').length;
+  $('nCrit').textContent = D.critical_path.length;
+  const n = $('nChecks'); n.textContent = nErr || nRisk || D.issues.length; n.className = 'n' + (nErr ? ' err' : nRisk ? ' risk' : '');
+}
+
+function renderPlan(D, label) {
+  const names = D.programs.map(p => D.program_names[p] || p);
+  const nCourses = D.courses.filter(c => c.code !== 'ELECTIVE').length;
+  const planned = D.terms.reduce((a, t) => a + t.total_credits, 0);
+  const nErr = D.issues.filter(i => i.level === 'error').length, nRisk = D.issues.filter(i => i.level === 'risk').length;
+  const max = Number($('max_credits').value) || 99;
+  const byTerm = {}; D.courses.forEach(c => (byTerm[c.term] = byTerm[c.term] || []).push(c));
+  const base = 'plan-' + slug(label || names.join(' '));
+  const stats = [
+    [D.graduation || '–', 'graduation'], [D.terms.length, 'terms left'], [nCourses, 'courses to take'],
+    [fmt(planned), 'credits planned'], [fmt(D.credits_earned + planned), 'total credits'],
+    [D.critical_path.length, 'critical courses'],
+  ];
+  $('pane-plan').innerHTML = `
+    <div class="head"><div><h2>${esc(label || names.join(' + '))}</h2>
+      <p>${esc(D.method === 'greedy' ? 'Greedy' : 'CP-SAT')} scheduler (${esc(D.status)}) · last required course ${esc(D.requirements_done || '–')}</p></div>
+      <div class="dl"><button class="btn small" id="dlCsv">Download CSV</button><button class="btn small" id="dlJson">JSON</button><button class="btn small" id="dlTxt">Text report</button></div></div>
+    ${nErr ? `<div class="banner err">${nErr} validation error${nErr > 1 ? 's' : ''}: see Checks.</div>` : ''}
+    <div class="stats">${stats.map(([b, s]) => `<div class="stat"><b>${esc(b)}</b><span>${esc(s)}</span></div>`).join('')}
+      <div class="stat ${nErr ? 'bad' : 'ok'}"><b>${nErr ? nErr + ' error' + (nErr > 1 ? 's' : '') : 'Valid'}</b><span>${nRisk} risk${nRisk === 1 ? '' : 's'}</span></div></div>
+    ${outcomesCard(D.programs)}
+    <div class="grid">${D.terms.filter(t => t.total_credits > 0 || /^(Spring|Fall)/.test(t.term)).map(t => {
+      const cs = byTerm[t.term] || [];
+      const off = !/^(Spring|Fall)/.test(t.term);
+      return `<div class="term ${off ? 'offseason' : ''}"><h3>${esc(t.term)}<small class="${!off && t.total_credits > max ? 'over' : ''}">${fmt(t.total_credits)} cr</small></h3>
+        ${cs.map(c => c.code === 'ELECTIVE' ? `<div class="fill">${fmt(c.credits)} cr open elective / SAS Core / minor</div>` : `
+          <div class="c ${c.critical ? 'crit' : ''}" tabindex="0">
+            <div class="top"><span class="code">${esc(c.code)}</span><span class="cr">${fmt(c.credits)} cr</span></div>
+            <span class="t">${esc(c.title)}</span>
+            ${c.critical ? '<span class="tag cr">critical</span>' : ''}${c.hard ? '<span class="tag hard">hard</span>' : ''}<span class="tag">${esc(c.offered)}</span>
+            <div class="more">
+              ${c.counts_toward ? `<div><b>Counts toward:</b> ${esc(c.counts_toward)}</div>` : ''}
+              <div><b>Prerequisites:</b> ${esc(c.prerequisites || 'none')}</div>
+              <div><b>Chain depth:</b> ${esc(c.chain_depth)} · <b>slack:</b> ${esc(c.slack_offerings === '' ? '–' : c.slack_offerings)} offering(s)${c.next_offered_if_missed ? ` · next offered if missed: ${esc(c.next_offered_if_missed)}` : ''}</div>
+            </div></div>`).join('')}</div>`;
+    }).join('')}</div>`;
+  $('pane-plan').querySelectorAll('.c').forEach(el => { const t = () => el.classList.toggle('open'); el.onclick = t; el.onkeydown = e => { if (e.key === 'Enter') t(); }; });
+  $('dlCsv').onclick = () => download(base + '.csv', D.csv, 'text/csv');
+  $('dlJson').onclick = () => { const {csv, text, ...rest} = D; download(base + '.json', JSON.stringify(rest, null, 2), 'application/json'); };
+  $('dlTxt').onclick = () => download(base + '.txt', D.text, 'text/plain');
+}
+
+// Career outcomes for the fields of the planned majors (merged site only).
+function outcomesCard(ids) {
+  if (!RMP) return '';
+  const money = v => v == null ? '–' : '$' + Math.round(v).toLocaleString();
+  const seen = new Set(), rows = [];
+  for (const id of ids) {
+    const p = RMP.programs[id];
+    if (!p || !p.cip4 || seen.has(p.cip4) || !p.outcomes) continue;
+    seen.add(p.cip4);
+    const o = p.outcomes;
+    rows.push(`<tr><td><a href="${esc(RMP.links.major + p.cip4)}">${esc(o.title)}</a><br><span style="color:var(--muted);font-size:12px">${esc(p.name)} · CIP ${esc(p.cip4)}</span></td>
+      <td class="num">${money(o.rutgers_1yr)}</td><td class="num">${money(o.rutgers_5yr)}</td><td class="num">${money(o.national_5yr)}</td>
+      <td class="num">${o.growth_pct == null ? '–' : (o.growth_pct > 0 ? '+' : '') + o.growth_pct.toFixed(1) + '%'}</td></tr>`);
+  }
+  if (!rows.length) return '';
+  return `<div class="card"><h3>Where these majors lead</h3><div style="overflow-x:auto"><table><thead><tr><th>Field</th><th class="num">RU–NB median, 1 yr</th><th class="num">RU–NB, 5 yr</th><th class="num">National, 5 yr</th><th class="num">Job growth</th></tr></thead>
+    <tbody>${rows.join('')}</tbody></table></div>
+    <p class="hint">Earnings from College Scorecard (federal-aid recipients); job growth is the BLS projection for linked occupations. <a href="${esc(RMP.links.outcomes)}">Explore all majors</a>.</p></div>`;
+}
+
+function renderCritical(D) {
+  const crit = D.courses.filter(c => c.critical);
+  $('pane-critical').innerHTML = `
+    <div class="head"><div><h2>Critical path</h2><p>Courses with no slack: missing one in its planned term pushes graduation back.</p></div></div>
+    ${D.critical_chains.length ? `<div class="card"><h3>Chains</h3>${D.critical_chains.map(ch => `<div class="chain">${ch.map(c => `<span class="node" title="${esc(titles[c] || '')}">${esc(c)}</span>`).join('<span class="arr">→</span>')}</div>`).join('')}</div>` : ''}
+    ${crit.length ? `<div class="wrap"><table><thead><tr><th>Course</th><th>Planned</th><th>Offered</th><th>If missed, next offered</th><th class="num">Chain depth</th></tr></thead><tbody>
+      ${crit.map(c => `<tr><td><b>${esc(c.code)}</b><br><span style="color:var(--muted)">${esc(c.title)}</span></td><td>${esc(c.term)}</td><td>${esc(c.offered)}</td><td>${esc(c.next_offered_if_missed || '–')}</td><td class="num">${esc(c.chain_depth)}</td></tr>`).join('')}
+      </tbody></table></div>` : '<div class="empty">Nothing is critical: every course has a later offering before graduation.</div>'}`;
+}
+
+function renderChecks(D) {
+  const order = {error: 0, risk: 1, info: 2};
+  const issues = D.issues.slice().sort((a, b) => order[a.level] - order[b.level]);
+  $('pane-checks').innerHTML = `
+    <div class="head"><div><h2>Checks</h2><p>The finished plan is re-checked from scratch: prerequisites, offerings, credit caps, locks and every requirement.</p></div></div>
+    ${issues.length ? issues.map(i => `<div class="issue ${esc(i.level)}"><b>${esc(i.level)}</b><span>${esc(i.message)}</span></div>`).join('') : '<div class="issue info"><b>ok</b><span>No issues found.</span></div>'}
+    ${D.notes && D.notes.length ? `<div class="card" style="margin-top:14px"><h3>Scheduler notes</h3>${D.notes.map(n => `<div class="hint">${esc(n)}</div>`).join('')}</div>` : ''}
+    ${Object.entries(D.program_notes || {}).filter(([, n]) => n.length).map(([p, n]) => `<div class="card"><h3>${esc(D.program_names[p] || p)}: not checked by the planner</h3>${n.map(x => `<div class="hint">• ${esc(x)}</div>`).join('')}</div>`).join('')}`;
+}
+
+function renderReqs(D) {
+  const rows = [];
+  for (const [p, rs] of Object.entries(D.requirements)) for (const [r, cs] of Object.entries(rs)) rows.push([p, r, cs]);
+  const shared = Object.entries(D.double_counted || {});
+  $('pane-reqs').innerHTML = `
+    <div class="head"><div><h2>Requirements</h2><p>Which courses (done or planned) fill each requirement.</p></div></div>
+    ${shared.length ? `<div class="card"><h3>Double-counted</h3>${shared.map(([k, v]) => `<div><b>${esc(k)}</b>: ${v.length} course${v.length === 1 ? '' : 's'}: ${v.map(esc).join(', ')}</div>`).join('')}</div>` : ''}
+    <div class="wrap"><table><thead><tr><th>Program</th><th>Requirement</th><th>Courses</th></tr></thead><tbody>
+    ${rows.map(([p, r, cs]) => `<tr><td>${esc(D.program_names[p] || p)}</td><td>${esc(r)}</td><td>${cs.length ? cs.map(c => `<span title="${esc(titles[c] || '')}">${esc(c)}</span>`).join(', ') : '<span style="color:var(--err)">none</span>'}</td></tr>`).join('')}
+    </tbody></table></div>`;
+}
+
+function renderWhatif(d) {
+  const sign = n => n > 0 ? `<span class="pos">+${n}</span>` : n < 0 ? `<span class="neg">${n}</span>` : '0';
+  $('whatifOut').innerHTML = `<div class="wrap"><table><thead><tr><th>Scenario</th><th>Graduation</th><th>Last required course</th><th class="num">Terms</th><th class="num">Extra terms</th><th class="num">New courses</th><th class="num">New credits</th><th class="num">Double-counted</th><th>Extra courses vs baseline</th><th>Checks</th></tr></thead><tbody>
+    ${d.rows.map((w, i) => `<tr class="click" data-i="${i}" title="Show this plan"><td><b>${esc(w.scenario)}</b><br><span style="color:var(--muted);font-size:12px">${w.programs.map(esc).join(', ')}</span></td>
+      <td>${esc(w.graduation)}</td><td>${esc(w.requirements_done)}</td><td class="num">${w.terms}</td><td class="num">${i ? sign(w.extra_terms) : '–'}</td>
+      <td class="num">${w.new_courses}</td><td class="num">${fmt(w.new_credits)}</td><td class="num">${w.double_counted}</td>
+      <td style="font-size:12.5px">${w.extra_courses.map(c => `<span title="${esc(titles[c] || '')}">${esc(c)}</span>`).join(', ') || '–'}</td>
+      <td>${w.errors ? `<span style="color:var(--err)">${w.errors} error${w.errors > 1 ? 's' : ''}</span>` : '<span style="color:var(--ok)">valid</span>'}${w.risks ? `<br><span style="color:var(--risk)">${w.risks} risk${w.risks > 1 ? 's' : ''}</span>` : ''}</td></tr>`).join('')}
+    </tbody></table></div>
+    <p class="hint">Click a row to open that scenario's term-by-term plan. "Last required course" is the last term with a course a program needs; later terms only add open credits toward ${fmt(Number($('total_credits_required').value) || 120)}.</p>`;
+  $('whatifOut').querySelectorAll('tr.click').forEach(tr => tr.onclick = () => { const w = d.rows[+tr.dataset.i]; current = w.plan; renderPlanAll(w.plan, w.scenario); tab('plan'); });
+}
+
+function renderRecord() {
+  const t = S.student.taken;
+  const lbl = {passed: 'done', in_progress: 'in progress', failed: 'no credit'};
+  $('pane-record').innerHTML = `
+    <div class="head"><div><h2>My record</h2><p>What the planner counts as done, from <code>${esc(S.config)}</code>. In-progress courses are assumed passed.</p></div></div>
+    <div class="stats"><div class="stat"><b>${t.length}</b><span>courses</span></div><div class="stat"><b>${fmt(S.student.credits_earned)}</b><span>credits earned</span></div></div>
+    ${S.student.files.length ? `<div class="card"><h3>Transcript files</h3>${S.student.files.map(f => `<div class="hint">${f.found ? '✓' : '✗ not found:'} ${esc(f.path)}</div>`).join('')}</div>` : ''}
+    ${t.length ? `<div class="wrap"><table><thead><tr><th>Course</th><th>Title</th><th>Term</th><th>Status</th><th class="num">Credits</th></tr></thead><tbody>
+      ${t.map(c => `<tr><td><b>${esc(c.code)}</b></td><td>${esc(c.title)}</td><td>${esc(c.term)}</td><td>${esc(lbl[c.status] || c.status)}</td><td class="num">${fmt(c.credits)}</td></tr>`).join('')}
+      </tbody></table></div>` : '<div class="empty">No courses found. Check the transcript paths in the config.</div>'}
+    <p class="hint" style="margin-top:10px">${RMP && S.config === 'my-record'
+      ? `This record comes from the <a href="${esc(RMP.links.whatif)}">What-if majors</a> page. Load your audit or add AP, transfer and test credit there, then reload this page.`
+      : `To add AP, transfer or in-progress courses, edit <code>student.extra_courses</code> in ${esc(S.config_path)} and reload this page.`}</p>`;
+}
+
+/* ---------- tabs & wiring ---------- */
+function tab(name) {
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.tab === name));
+  document.querySelectorAll('.pane').forEach(p => p.classList.toggle('on', p.id === 'pane-' + name));
+}
+$('tabs').onclick = e => { const b = e.target.closest('.tab'); if (b) tab(b.dataset.tab); };
+$('config').onchange = () => load($('config').value);
+$('form').addEventListener('change', save);
+$('reset').onclick = () => { applyState(fromConfig()); save(); };
+$('runPlan').onclick = runPlan;
+$('runWhatif').onclick = runWhatif;
+$('runWhatif2').onclick = runWhatif;
+document.addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') runPlan(); });
+load(new URLSearchParams(location.search).get('config'));
+</script>
+</body>
+</html>

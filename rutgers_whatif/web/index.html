@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rutgers What-If</title>
+<style>
+:root {
+  --bg: #f6f6f4; --panel: #ffffff; --text: #1d1d1f; --muted: #66666e; --line: #e2e2e0;
+  --accent: #cc0033; --accent-text: #ffffff; --ok: #1f7a3a; --warn: #9a6700; --bad: #b42318;
+  --chip: #f0f0ee; --code: #f3f3f1;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #161618; --panel: #1f1f22; --text: #ececef; --muted: #a0a0a8; --line: #333338;
+    --accent: #ff4d6d; --accent-text: #160006; --ok: #5cc27c; --warn: #e3b341; --bad: #ff7b72;
+    --chip: #2a2a2e; --code: #26262a; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text);
+  font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+header { padding: 20px 16px 8px; max-width: 1100px; margin: 0 auto; }
+header h1 { margin: 0; font-size: 22px; }
+header p { margin: 4px 0 0; color: var(--muted); }
+main { max-width: 1100px; margin: 0 auto; padding: 8px 16px 40px; display: grid; gap: 14px;
+  grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { main { grid-template-columns: 360px minmax(0, 1fr); align-items: start; } }
+.steps { display: grid; gap: 14px; min-width: 0; }
+section { min-width: 0; }
+#mine td, #mine th { white-space: normal; } #mine td:first-child { overflow-wrap: anywhere; }
+section { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+h2 { margin: 0 0 8px; font-size: 15px; display: flex; gap: 8px; align-items: center; }
+h2 .n { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--chip); font-size: 12px; }
+p.hint { margin: 0 0 10px; color: var(--muted); font-size: 13px; }
+button { font: inherit; border: 1px solid var(--line); background: var(--chip); color: var(--text);
+  border-radius: 7px; padding: 6px 12px; cursor: pointer; }
+button.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+button:disabled { opacity: .5; cursor: default; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.status { font-size: 13px; margin-top: 8px; color: var(--muted); }
+.good { color: var(--ok); } .warn { color: var(--warn); } .bad { color: var(--bad); }
+input[type=number] { width: 90px; } input, select, textarea { font: inherit; color: var(--text);
+  background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 5px 7px; }
+textarea { width: 100%; min-height: 70px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+label.chk { display: inline-flex; gap: 5px; align-items: center; font-size: 14px; }
+#job { display: none; grid-column: 1 / -1; } #job.show { display: block; }
+.callout { margin-top: 8px; padding: 10px 12px; border-radius: 8px; background: var(--chip); display: grid; gap: 6px; font-size: 14px; }
+#log { background: var(--code); border-radius: 6px; padding: 8px; max-height: 220px; overflow: auto;
+  font: 12px/1.4 ui-monospace, Menlo, monospace; white-space: pre-wrap; margin: 8px 0 0; }
+.waitbox { margin-top: 8px; padding: 10px; border-radius: 8px; border: 1px solid var(--accent); }
+.progs { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 4px 12px; margin: 6px 0 10px; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 6px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .03em; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+details { border-top: 1px solid var(--line); padding: 8px 0; }
+summary { cursor: pointer; font-weight: 600; }
+.req { margin: 6px 0 6px 4px; }
+.req .mark { display: inline-block; width: 18px; }
+.sub { color: var(--muted); font-size: 13px; margin-left: 22px; overflow-wrap: anywhere; }
+.chip { display: inline-block; background: var(--chip); border-radius: 5px; padding: 0 6px; margin: 2px 2px 0 0;
+  font: 12px/1.6 ui-monospace, Menlo, monospace; }
+.empty { color: var(--muted); }
+a { color: var(--accent); }
+td a + a { margin-left: 8px; }
+.nextrow { margin: 8px 0 4px 4px; font-size: 13px; gap: 6px 14px; }
+#results td:first-child { white-space: normal; min-width: 150px; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Rutgers What-If</h1>
+  <p>Your Degree Navigator audit, compared across majors and minors. Runs only on this computer.</p>
+</header>
+<main>
+  <section id="job">
+    <h2 id="job-title">Job</h2>
+    <div id="job-state" class="status" style="margin-top:0"></div>
+    <div id="winhelp" class="callout" hidden>
+      <strong>A separate browser window just opened. Sign in there.</strong>
+      <div>It's a plain browser window with its own Dock icon (“Google Chrome for Testing” or “Chromium”). If you don't see it, it may be behind this window: check the Dock or press ⌘-Tab.</div>
+      <div>Signing in to Degree Navigator in a normal tab, like this one, doesn't count. The tool can only save a login made in that separate window.</div>
+    </div>
+    <div id="waitbox" class="waitbox" hidden>
+      <div id="winstate" class="status" style="margin-top:0"></div>
+      <div id="prompt" style="margin-top:4px"></div>
+      <div class="row" style="margin-top:8px"><button class="primary" id="done">I'm done</button></div>
+    </div>
+    <div id="log"></div>
+  </section>
+  <div class="steps">
+  <section>
+    <h2><span class="n">1</span>Log in</h2>
+    <p class="hint">Opens a <strong>separate</strong> browser window at Degree Navigator. Sign in with your NetID and Duo <strong>in that window</strong> (not in your own browser tab), then click “I'm done” here.</p>
+    <div class="row"><button class="primary" data-run="login">Log in</button><button data-run="check">Check session</button></div>
+    <div class="status" id="st-session"></div>
+  </section>
+
+  <section>
+    <h2><span class="n">2</span>Discover</h2>
+    <p class="hint">Opens Degree Navigator with your session. Click through your audit and course history, then click “I'm done”. This finds out whether the data is JSON or HTML.</p>
+    <div class="row"><button class="primary" data-run="discover">Start discovery</button></div>
+    <div class="status" id="st-discover"></div>
+  </section>
+
+  <section>
+    <h2><span class="n">3</span>Get your audit</h2>
+    <p class="hint">Re-fetches the pages you visited, 1–2 s apart.</p>
+    <div class="row"><button class="primary" data-run="scrape">Scrape</button><button data-run="reparse">Re-parse saved pages</button></div>
+    <div class="status" id="st-audit"></div>
+    <details style="border:0;padding:8px 0 0">
+      <summary style="font-weight:400;font-size:13px">Or paste/upload a course CSV instead</summary>
+      <p class="hint" style="margin-top:6px">Columns: code,title,credits,grade,term</p>
+      <input type="file" id="csvfile" accept=".csv,text/csv">
+      <textarea id="csv" placeholder="code,title,credits,grade,term&#10;01:198:111,Intro CS,4,A,Fall 2024"></textarea>
+      <div class="row" style="margin-top:6px"><button id="import">Import courses</button></div>
+    </details>
+  </section>
+
+  <section id="mine">
+    <h2><span class="n">+</span>Your courses &amp; AP credit</h2>
+    <p class="hint">AP, test and transfer credit counts as completed. If yours is missing, add it here. It stays put when you re-scrape.</p>
+    <div style="font-size:13px;font-weight:600;margin-bottom:4px">Add an AP exam</div>
+    <select id="ap-exam" style="width:100%;margin-bottom:8px"></select>
+    <div class="row">
+      <select id="ap-score"><option value="5">Score 5</option><option value="4">Score 4</option><option value="3">Score 3 or lower</option></select>
+      <button class="primary" id="ap-exam-add">Add</button>
+    </div>
+    <div class="status" id="ap-preview" style="margin-top:4px"></div>
+    <div style="font-size:13px;font-weight:600;margin:10px 0 4px">Or add any course by code</div>
+    <div class="row">
+      <input id="ap-code" placeholder="01:640:151" style="width:130px">
+      <select id="ap-term"><option>AP</option><option>Transfer</option><option>IB</option><option>CLEP</option><option>Dual enrollment</option></select>
+      <input id="ap-credits" type="number" min="0" max="12" step="0.5" placeholder="credits" style="width:90px">
+      <button id="ap-add">Add</button>
+    </div>
+    <div class="status" id="st-mine"></div>
+    <details id="mine-list" style="border:0;padding:8px 0 0">
+      <summary style="font-weight:400;font-size:13px" id="mine-sum">Show my courses</summary>
+      <div class="tablewrap" style="margin-top:6px"><table><thead><tr><th>Course</th><th>Grade</th><th>Term / source</th><th></th></tr></thead><tbody id="mine-body"></tbody></table></div>
+    </details>
+  </section>
+
+  <section>
+    <h2><span class="n">4</span>Course data</h2>
+    <p class="hint">Public Schedule of Classes, for course titles, credits and prerequisites. Each term is downloaded once.</p>
+    <div class="row">
+      <input type="number" id="year" min="2015" max="2035">
+      <label class="chk"><input type="checkbox" value="spring" class="term" checked>Spring</label>
+      <label class="chk"><input type="checkbox" value="summer" class="term">Summer</label>
+      <label class="chk"><input type="checkbox" value="fall" class="term" checked>Fall</label>
+      <label class="chk"><input type="checkbox" value="winter" class="term">Winter</label>
+    </div>
+    <div class="row" style="margin-top:8px"><button class="primary" id="soc">Download</button></div>
+    <div class="status" id="st-soc"></div>
+  </section>
+  </div>
+
+  <div class="steps">
+  <section id="right">
+    <h2><span class="n">5</span>What if…</h2>
+    <p class="hint">Choose your current program(s), then the ones you're considering.</p>
+    <div><strong style="font-size:13px">I'm currently in</strong> <span class="hint" style="font-size:12px">(leave all unchecked if you're undeclared)</span><div class="progs" id="cur"></div></div>
+    <div><strong style="font-size:13px">Compare</strong><div class="progs" id="cmp"></div></div>
+    <div class="row"><button class="primary" id="run">Compare</button><span class="status" id="st-whatif" style="margin:0"></span></div>
+    <div id="results"></div>
+  </section>
+
+  <section id="lookup">
+    <h2><span class="n">6</span>Course lookup</h2>
+    <p class="hint">Type a course code or name to see what you need before taking it, the full chain of prerequisites, and which majors and minors it counts toward. It works whether or not you've declared a major. It needs course data from step 4.</p>
+    <div class="row"><input id="q" placeholder="e.g. 01:198:344 or linear algebra" style="flex:1;min-width:0" list="qlist" autocomplete="off"><datalist id="qlist"></datalist><button class="primary" id="lookbtn">Look up</button></div>
+    <div id="course" style="margin-top:10px"></div>
+  </section>
+  </div>
+</main>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, attrs = {}, ...kids) => {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") e.className = v; else if (k === "text") e.textContent = v; else e.setAttribute(k, v);
+  }
+  for (const k of kids) e.append(k);
+  return e;
+};
+const store = {
+  get(k, d) { try { return JSON.parse(localStorage.getItem("rwi:" + k)) ?? d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem("rwi:" + k, JSON.stringify(v)); } catch {} },
+};
+
+// Inside the merged site the page is served at /whatif with its API under /whatif/api and
+// window.RMP carrying the shared program list; standalone (`rutgers_whatif serve`) both are absent.
+const API = document.documentElement.dataset.api || "";
+const RMP = window.RMP || null;
+const URLQ = new URLSearchParams(location.search);
+
+async function api(path, body) {
+  const opt = body === undefined ? {} : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) };
+  const r = await fetch(API + path, opt);
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || r.statusText);
+  return j;
+}
+
+let programsDrawn = false, lastJobState = null;
+
+function drawPrograms(programs) {
+  if (programsDrawn) return;
+  programsDrawn = true;
+  const cur = store.get("current", []);
+  let cmp = store.get("compare", programs.map(p => p.id));
+  if (URLQ.get("compare")) {     // linked from another page: compare these (plus what you're in)
+    const want = URLQ.get("compare").split(",").filter(id => programs.some(p => p.id === id));
+    if (want.length) { cmp = [...new Set([...want, ...cur])]; store.set("compare", cmp); }
+  }
+  for (const [box, sel, key] of [[$("#cur"), cur, "current"], [$("#cmp"), cmp, "compare"]]) {
+    for (const p of programs) {
+      const cb = el("input", { type: "checkbox", value: p.id });
+      cb.checked = sel.includes(p.id);
+      cb.addEventListener("change", () => store.set(key, [...box.querySelectorAll("input:checked")].map(i => i.value)));
+      box.append(el("label", { class: "chk" }, cb, `${p.name}`));
+    }
+  }
+}
+
+function setStatus(id, text, cls = "") { const e = $(id); e.textContent = text; e.className = "status " + cls; }
+
+async function refresh() {
+  let s;
+  try { s = await api("/api/status"); } catch (e) { setStatus("#st-session", "Server not reachable: " + e.message, "bad"); return; }
+  drawPrograms(s.programs);
+  setStatus("#st-session", s.session_saved ? "Session saved (auth.json)." : "Not logged in yet.", s.session_saved ? "good" : "warn");
+  setStatus("#st-discover", s.discovered ? `Mode: ${s.discovered.mode.toUpperCase()}. ${s.discovered.json} JSON endpoints, ${s.discovered.html} HTML pages.` : "Not run yet.", s.discovered ? "good" : "");
+  setStatus("#st-audit", s.audit ? `${s.audit.courses} courses, ${s.audit.requirements} requirement rows (${s.audit.source}, ${new Date(s.audit.fetched_at).toLocaleString()}).` : "No audit yet.", s.audit ? "good" : "");
+  setStatus("#st-soc", s.soc_terms.length ? `${s.soc_courses} courses cached from ${s.soc_terms.join(", ")}.`
+    : s.soc_bundled ? `Nothing downloaded yet. Using the ${s.soc_bundled} courses bundled with the planner (Spring 2023 – Spring 2027).` : "Nothing downloaded yet.",
+    s.soc_terms.length || s.soc_bundled ? "good" : "");
+  drawJob(s.job);
+}
+
+const WINDOW_TEXT = {
+  login: ["That window is on the Rutgers sign-in page. Finish NetID + Duo there.", "warn"],
+  signed_in: ["Signed in. Click \u201cI'm done\u201d to save your session.", "good"],
+  other: ["That window is on a non-Rutgers page. Go back to Degree Navigator there.", "warn"],
+  closed: ["The window was closed.", "bad"],
+};
+
+function drawJob(job) {
+  const box = $("#job");
+  if (!job.name) { box.classList.remove("show"); return; }
+  const wasHidden = !box.classList.contains("show");
+  box.classList.add("show");
+  $("#job-title").textContent = "Job: " + job.name;
+  const label = { running: "Running…", waiting: "Waiting for you", done: "Finished", error: "Failed", idle: "" }[job.state];
+  setStatus("#job-state", label, job.state === "error" ? "bad" : job.state === "done" ? "good" : "warn");
+  const usesWindow = job.name === "login" || job.name === "discover";
+  const busy = job.state === "running" || job.state === "waiting";
+  $("#winhelp").hidden = !(usesWindow && busy);
+  $("#waitbox").hidden = job.state !== "waiting";
+  $("#prompt").textContent = job.prompt || "";
+  const w = job.window || {};
+  const wt = WINDOW_TEXT[w.state];
+  let wtext = wt ? wt[0] : "";
+  if (job.name === "discover" && w.captured !== undefined) wtext += ` Recorded ${w.captured} responses so far.`;
+  setStatus("#winstate", wtext, wt ? wt[1] : "");
+  const log = $("#log");
+  log.textContent = job.log.join("\n");
+  log.scrollTop = log.scrollHeight;
+  document.querySelectorAll("[data-run], #soc, #import").forEach(b => b.disabled = busy);
+  if (wasHidden || (lastJobState !== job.state && job.state === "error")) box.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (lastJobState && lastJobState !== job.state && !busy) { refresh(); loadMine(); }
+  lastJobState = job.state;
+}
+
+async function run(action, body = {}) {
+  try { await api("/api/run/" + action, body); } catch (e) { alertJob(e.message); }
+  refresh();
+}
+function alertJob(msg) { setStatus("#job-state", msg, "bad"); $("#job").classList.add("show"); }
+
+document.querySelectorAll("[data-run]").forEach(b => b.addEventListener("click", () => run(b.dataset.run)));
+$("#done").addEventListener("click", async () => { await api("/api/done", {}); refresh(); });
+$("#soc").addEventListener("click", () => {
+  const terms = [...document.querySelectorAll(".term:checked")].map(i => i.value);
+  store.set("year", $("#year").value);
+  run("soc", { year: Number($("#year").value), terms });
+});
+$("#csvfile").addEventListener("change", async e => { const f = e.target.files[0]; if (f) $("#csv").value = await f.text(); });
+$("#import").addEventListener("click", () => run("import", { csv: $("#csv").value }));
+$("#year").value = store.get("year", new Date().getFullYear());
+
+$("#run").addEventListener("click", async () => {
+  const cur = [...$("#cur").querySelectorAll("input:checked")].map(i => i.value);
+  const cmp = [...$("#cmp").querySelectorAll("input:checked")].map(i => i.value);
+  setStatus("#st-whatif", "Working…");
+  try {
+    const r = await api(`/api/whatif?programs=${encodeURIComponent(cmp.join(","))}&current=${encodeURIComponent(cur.join(","))}`);
+    drawResults(r);
+    setStatus("#st-whatif", `${r.courses_considered} of your courses considered.`);
+  } catch (e) { setStatus("#st-whatif", e.message, "bad"); }
+});
+
+function chips(codes) { const d = el("span"); codes.forEach(c => d.append(el("span", { class: "chip", text: c }))); return d; }
+
+function drawResults(r) {
+  const out = $("#results"); out.replaceChildren();
+  const hasCur = r.current.length > 0;
+  const head = el("tr", {}, el("th", { text: "Program" }), el("th", { class: "num", text: "Reqs" }),
+    el("th", { class: "num", text: "Courses left" }), el("th", { class: "num", text: "≈ Credits" }));
+  if (hasCur) head.append(el("th", { class: "num", text: "Switch", title: "change in courses left vs. your current program" }), el("th", { class: "num", text: "Add", title: "extra courses if you add it" }));
+  if (RMP) head.append(el("th", { text: "Next" }));
+  const tbody = el("tbody");
+  for (const p of r.programs) {
+    const tr = el("tr", {}, el("td", { text: p.name }), el("td", { class: "num", text: `${p.requirements_met}/${p.requirements_total}` }),
+      el("td", { class: "num", text: p.courses_remaining }), el("td", { class: "num", text: Math.round(p.credits_remaining) }));
+    if (hasCur) {
+      if (p.switch) {
+        const d = p.switch.change_vs_current_courses;
+        tr.append(el("td", { class: "num " + (d <= 0 ? "good" : "warn"), text: (d > 0 ? "+" : d < 0 ? "−" : "") + Math.abs(d) }),
+                  el("td", { class: "num", text: "+" + p.add.extra_courses }));
+      } else tr.append(el("td", { class: "num empty", text: "current" }), el("td"));
+    }
+    if (RMP) tr.append(el("td", {}, ...nextLinks(p.id, r.current, true)));
+    tbody.append(tr);
+  }
+  out.append(el("div", { class: "tablewrap" }, el("table", {}, el("thead", {}, head), tbody)));
+
+  for (const p of r.programs) {
+    const d = el("details", {}, el("summary", { text: `${p.name} — ${p.courses_remaining} courses left` }));
+    for (const q of p.requirements) {
+      const mark = q.satisfied ? ["✓", "good"] : q.satisfied_with_in_progress ? ["~", "warn"] : ["○", "bad"];
+      const box = el("div", { class: "req" }, el("span", { class: "mark " + mark[1], text: mark[0] }), q.name);
+      if (q.applied.length) box.append(el("div", { class: "sub" }, "applied: ", chips(q.applied)));
+      if (q.in_progress.length && !q.satisfied) box.append(el("div", { class: "sub" }, "in progress: ", chips(q.in_progress)));
+      for (const n of q.still_needed) box.append(el("div", { class: "sub", text: "needs " + n }));
+      d.append(box);
+    }
+    const ready = p.next_courses.filter(n => n.ready), blocked = p.next_courses.filter(n => !n.ready);
+    if (ready.length) d.append(el("div", { class: "sub", style: "margin-left:4px" }, "can take now: ", chips(ready.map(n => n.code))));
+    for (const n of blocked) d.append(el("div", { class: "sub", style: "margin-left:4px", text: `${n.code} needs first: ${n.prereqs}` }));
+    if (p.overlap_with_current && p.overlap_with_current.length)
+      d.append(el("div", { class: "sub", style: "margin-left:4px" }, "already counts from current: ", chips(p.overlap_with_current)));
+    if (RMP) d.append(el("div", { class: "row nextrow" }, ...nextLinks(p.id, r.current, false)));
+    out.append(d);
+  }
+  out.append(el("p", { class: "hint", style: "margin-top:10px",
+    text: "Switch = change in courses left versus your current program; Add = extra courses on top of it. ✓ done · ~ done once in-progress courses pass · ○ open. Elective credits are estimates. Degree Navigator and your advisor have the final word." }));
+}
+
+// Links into the graduation planner and the career-outcomes pages (merged site only).
+function nextLinks(id, current, compact) {
+  const info = RMP.programs[id] || {}, links = [];
+  const plan = ids => RMP.links.plan + "?programs=" + encodeURIComponent([...new Set(ids)].join(","));
+  if (info.planner) {
+    const others = current.filter(c => c !== id && (RMP.programs[c] || {}).planner);
+    if (!current.length || current.includes(id)) links.push(el("a", { href: plan([id]), text: compact ? "Plan" : "Plan graduation" }));
+    else {
+      links.push(el("a", { href: plan([...others, id]), text: compact ? "Plan + add" : "Plan it on top of your current program" }));
+      if (!compact) links.push(el("a", { href: plan([id]), text: "Plan it as a switch" }));
+    }
+  }
+  if (info.cip4) {
+    const o = info.outcomes || {}, pay = o.rutgers_5yr || o.rutgers_1yr;
+    links.push(el("a", { href: RMP.links.major + info.cip4,
+      text: compact ? "Careers" : `Career outcomes${pay ? ` (RU–NB median $${Math.round(pay / 1000)}k, ${o.rutgers_5yr ? 5 : 1} yr out)` : ""}` }));
+  }
+  return links.length ? links : [el("span", { class: "empty", text: "–" })];
+}
+
+let searchTimer;
+$("#q").addEventListener("input", () => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(async () => {
+    const v = $("#q").value.trim();
+    if (v.length < 3) return;
+    try {
+      const r = await api("/api/search?q=" + encodeURIComponent(v));
+      $("#qlist").replaceChildren(...r.results.map(h => el("option", { value: h.code, label: `${h.code} ${h.title}` })));
+    } catch {}
+  }, 250);
+});
+$("#q").addEventListener("keydown", e => { if (e.key === "Enter") lookupCourse(); });
+$("#lookbtn").addEventListener("click", lookupCourse);
+
+async function lookupCourse() {
+  const box = $("#course"), v = $("#q").value.trim();
+  if (!v) return;
+  box.replaceChildren(el("div", { class: "status", text: "Looking up…" }));
+  let code = v;
+  try {
+    if (!/\d{2,3}:\d{3}/.test(v)) {
+      const r = await api("/api/search?q=" + encodeURIComponent(v));
+      if (!r.have_soc) { box.replaceChildren(el("div", { class: "status warn", text: "Download course data in step 4 first." })); return; }
+      if (!r.results.length) { box.replaceChildren(el("div", { class: "status bad", text: "No course matches that." })); return; }
+      code = r.results[0].code;
+    }
+    const d = await api("/api/course?code=" + encodeURIComponent(code));
+    const out = [el("div", {}, el("strong", { text: `${d.code} ${d.title || ""}` }), d.credits ? ` · ${d.credits} credits` : "")];
+    if (!d.have_soc) out.push(el("div", { class: "status warn", text: "Download course data in step 4 to see prerequisites." }));
+    else if (!d.known) out.push(el("div", { class: "status warn", text: "Not in the downloaded terms. Try downloading another term." }));
+    if (!d.have_courses) out.push(el("div", { class: "status", text: "No courses loaded yet, so this assumes you haven't taken anything." }));
+    out.push(el("div", { class: "sub", style: "margin-left:0", text: "Prerequisites: " + d.prereqs }));
+    out.push(el("div", { class: "status " + (d.taken || d.ready ? "good" : "warn"),
+      text: d.taken ? "You've already taken this." : d.ready ? "You can take this now." : "You need prerequisites first." }));
+    if (d.path.length) {
+      out.push(el("div", { style: "margin-top:6px;font-size:14px", text: "Take these first, in order:" }));
+      const ol = el("ol", { style: "margin:4px 0 0 0;padding-left:22px;font-size:14px" });
+      d.path.forEach(p => ol.append(el("li", {}, el("span", { class: "chip", text: p.code }), " " + (p.title || ""))));
+      out.push(ol);
+    }
+    if (d.counts_toward.length) {
+      out.push(el("div", { style: "margin-top:8px;font-size:14px", text: "Counts toward:" }));
+      const ul = el("ul", { style: "margin:4px 0 0 0;padding-left:22px;font-size:14px" });
+      d.counts_toward.forEach(c => ul.append(el("li", { text: `${c.program_name}: ${c.requirement}` })));
+      out.push(ul);
+    } else out.push(el("div", { class: "status", text: "Doesn't count toward any of the programs defined here." }));
+    box.replaceChildren(...out);
+  } catch (e) { box.replaceChildren(el("div", { class: "status bad", text: e.message })); }
+}
+
+async function loadMine() {
+  let r;
+  try { r = await api("/api/courses"); } catch { return; }
+  const ap = r.courses.filter(c => c.transfer).length;
+  $("#mine-sum").textContent = r.courses.length ? `Show my courses (${r.courses.length}, ${ap} AP/transfer)` : "No courses yet";
+  const body = $("#mine-body"); body.replaceChildren();
+  for (const c of r.courses) {
+    const src = c.source === "manual" ? `${c.term || ""} · added by you` : (c.term || "") + (c.transfer && !/ap|transfer|test|ib|clep/i.test(c.term || "") ? " · AP/transfer" : "");
+    const tr = el("tr", {}, el("td", {}, el("span", { class: "chip", text: c.code }), " " + (c.title || "")),
+      el("td", { text: c.grade || "–" }), el("td", { text: src, class: c.transfer ? "good" : "" }), el("td"));
+    if (c.source === "manual") {
+      const b = el("button", { text: "Remove" });
+      b.addEventListener("click", async () => { await api("/api/courses/remove", { code: c.code }); loadMine(); });
+      tr.lastChild.append(b);
+    }
+    body.append(tr);
+  }
+}
+$("#ap-add").addEventListener("click", async () => {
+  try {
+    const r = await api("/api/courses/add", { code: $("#ap-code").value, term: $("#ap-term").value, credits: $("#ap-credits").value });
+    setStatus("#st-mine", `Added ${r.added.code} (${r.added.term}). Run Compare again to see the effect.`, "good");
+    $("#ap-code").value = ""; $("#ap-credits").value = "";
+    loadMine(); refresh();
+  } catch (e) { setStatus("#st-mine", e.message, "bad"); }
+});
+loadMine();
+
+let AP = null;
+async function loadAP() {
+  try { AP = await api("/api/ap-exams"); } catch { return; }
+  const sel = $("#ap-exam");
+  sel.replaceChildren(...AP.exams.map(e => el("option", { value: e.exam, text: "AP " + e.exam })));
+  sel.addEventListener("change", previewAP); $("#ap-score").addEventListener("change", previewAP);
+  previewAP();
+}
+function previewAP() {
+  const e = AP && AP.exams.find(x => x.exam === $("#ap-exam").value);
+  if (!e) return;
+  const got = e.awards[$("#ap-score").value];
+  setStatus("#ap-preview", got ? `Counts as ${got.join(", ")} (${e.credits[$("#ap-score").value]} credits).${e.note ? " " + e.note : ""}`
+                               : "SAS gives no credit for a score of 3 or lower.", got ? "" : "warn");
+  $("#ap-exam-add").disabled = !got;
+}
+$("#ap-exam-add").addEventListener("click", async () => {
+  try {
+    const r = await api("/api/courses/add-ap", { exam: $("#ap-exam").value, score: Number($("#ap-score").value) });
+    setStatus("#st-mine", `Added ${r.added.map(c => c.code).join(", ")}. Run Compare again to see the effect.`, "good");
+    loadMine(); refresh();
+  } catch (e) { setStatus("#st-mine", e.message, "bad"); }
+});
+loadAP();
+
+refresh();
+setInterval(() => { if (lastJobState === "running" || lastJobState === "waiting") refresh(); }, 1500);
+</script>
+</body>
+</html>

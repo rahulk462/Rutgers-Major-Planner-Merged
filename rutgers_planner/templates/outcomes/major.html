@@ -1,0 +1,181 @@
+{% extends "outcomes/_base.html" %}
+{% from "outcomes/_macros.html" import caveat_block, fds_card %}
+{% block title %}{{ m.title }}{% endblock %}
+{% set sr = m.scorecard.rutgers or {} %}
+{% set sn = m.scorecard.national or {} %}
+{% set pr = m.pseo.rutgers or {} %}
+{% set pn = m.pseo.nj or {} %}
+{% block content %}
+<nav class="crumbs"><a href="{{ url_for('outcomes.home') }}">All majors</a> / {{ m.cip2_title }}</nav>
+<header class="major-head">
+  <h1>{{ m.title }}</h1>
+  <p class="muted">CIP {{ m.cip4 }} · bachelor's degree · {{ m.fds.school_name }}
+    {% if m.rutgers_majors %}<br>Rutgers majors in this code: {{ m.rutgers_majors|join(', ') }}{% endif %}</p>
+  <a class="button secondary" href="{{ url_for('outcomes.compare', c=m.cip4) }}">Compare with other majors</a>
+</header>
+
+{% if programs %}
+<aside class="plan-box" aria-label="Plan this major">
+  <h2>Thinking about this major?</h2>
+  <p class="small muted">See how far your own record is from it, then build a term-by-term plan to graduation.</p>
+  <ul>
+  {% for p in programs %}
+    <li><strong>{{ p.name }}</strong> <span class="muted small">{{ p.kind }}</span> ·
+      {% if p.whatif %}<a href="{{ url_for('whatif.page') }}?compare={{ p.id }}">What-if with my courses</a>{% endif %}
+      {% if p.whatif and p.planner %} · {% endif %}
+      {% if p.planner %}<a href="{{ url_for('planner.page') }}?programs={{ p.id }}">Plan graduation</a>{% endif %}</li>
+  {% endfor %}
+  </ul>
+</aside>
+{% endif %}
+
+<section class="tiles">
+  <div class="tile">
+    <span class="tile-label">Median earnings 1 yr after graduation</span>
+    <span class="tile-value">{{ sr.earn_1yr|money }}</span>
+    <span class="tile-note">Rutgers–NB · national {{ sn.mdn_1yr|money }} <span class="src">Scorecard</span></span>
+  </div>
+  <div class="tile">
+    <span class="tile-label">Median earnings 5 yrs after</span>
+    <span class="tile-value">{{ (sr.earn_5yr or (pr.y5 or {}).p50)|money }}</span>
+    <span class="tile-note">{% if sr.earn_5yr %}national {{ sn.mdn_5yr|money }} <span class="src">Scorecard</span>{% else %}NJ {{ (pn.y5 or {}).p50|money }} <span class="src">PSEO</span>{% endif %}</span>
+  </div>
+  <div class="tile">
+    <span class="tile-label">Median earnings 10 yrs after</span>
+    <span class="tile-value">{{ (pr.y10 or {}).p50|money }}</span>
+    <span class="tile-note">NJ statewide {{ (pn.y10 or {}).p50|money }} <span class="src">PSEO</span></span>
+  </div>
+  <div class="tile">
+    <span class="tile-label">Projected job growth, linked occupations</span>
+    <span class="tile-value">{% if m.bls and m.bls.growth_pct is not none %}{{ '%+.1f'|format(m.bls.growth_pct) }}%{% else %}—{% endif %}</span>
+    <span class="tile-note">{% if m.bls %}BLS {{ m.bls.years }} · all occupations {{ '%+.1f'|format(meta.bls_total_growth) }}%{% else %}no linked occupations{% endif %} <span class="src">BLS</span></span>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Earnings over time</h2>
+  <p class="muted">Median annual earnings by years since graduation. Shaded bands show the 25th–75th percentile where published.
+    Scorecard and PSEO measure different groups of graduates, so read each pair (Rutgers vs. its benchmark) within one source.</p>
+  <div class="chart-box"><canvas id="earnings-chart" aria-label="Earnings over time chart" role="img"></canvas></div>
+  <details class="table-view"><summary>Show as a table</summary>
+    <table class="data-table compact">
+      <thead><tr><th>Years after graduation</th><th class="num">RU–NB (Scorecard)</th><th class="num">National (Scorecard)</th><th class="num">RU–NB (PSEO)</th><th class="num">NJ statewide (PSEO)</th></tr></thead>
+      <tbody>
+      {% for y, sk, pk in [(1,'1yr','y1'),(4,'4yr',None),(5,'5yr','y5'),(7,'7yr',None),(10,None,'y10')] %}
+        <tr><td>{{ y }}</td>
+          <td class="num">{{ (sr['earn_' ~ sk] if sk else None)|money }}{% if sk and sr['n_' ~ sk] %} <span class="muted">n={{ sr['n_' ~ sk]|num }}</span>{% endif %}</td>
+          <td class="num">{{ (sn['mdn_' ~ sk] if sk else None)|money }}</td>
+          <td class="num">{{ ((pr[pk] or {}).p50 if pk else None)|money }}{% if pk and pr[pk] and pr[pk].n %} <span class="muted">n={{ pr[pk].n|num }}</span>{% endif %}</td>
+          <td class="num">{{ ((pn[pk] or {}).p50 if pk else None)|money }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </details>
+  {% if sr.median_debt %}<p class="small">Median federal debt at graduation: <strong>{{ sr.median_debt|money }}</strong> <span class="src">Scorecard</span></p>{% endif %}
+</section>
+
+{% if m.pseo.cohorts %}
+<section class="panel">
+  <h2>Has it changed? Earnings by graduating class</h2>
+  <p class="muted">Rutgers–NB median earnings for each group of graduating classes (PSEO). Later classes have not reached 5 or 10 years yet.</p>
+  <div class="chart-box short"><canvas id="cohort-chart" aria-label="Earnings by graduation cohort" role="img"></canvas></div>
+  <details class="table-view"><summary>Show as a table</summary>
+    <table class="data-table compact"><thead><tr><th>Graduating classes</th><th class="num">1 yr</th><th class="num">5 yr</th><th class="num">10 yr</th><th class="num">Grads with earnings (1 yr)</th></tr></thead>
+    <tbody>{% for c in m.pseo.cohorts %}<tr><td>{{ c.cohort }}–{{ c.cohort + c.span - 1 }}</td><td class="num">{{ c.y1_p50|money }}</td><td class="num">{{ c.y5_p50|money }}</td><td class="num">{{ c.y10_p50|money }}</td><td class="num">{{ c.y1_n|num }}</td></tr>{% endfor %}</tbody></table>
+  </details>
+</section>
+{% endif %}
+
+{% set fl = m.pseo.flows %}
+{% if fl %}
+<section class="panel">
+  <h2>Employment and where graduates work</h2>
+  <p class="muted">PSEO publishes destinations for the whole field ({{ m.cip2_title }}, CIP {{ fl.cip2 }}), not for each major.</p>
+  <div class="tiles">
+    {% for y, label in [('y1','1 year'),('y5','5 years'),('y10','10 years')] %}{% set e = fl.employment[y] %}{% if e %}
+    <div class="tile small-tile"><span class="tile-label">Employed at {{ label }}</span>
+      <span class="tile-value">{{ e.employed_share|pct }}</span>
+      <span class="tile-note">{{ e.in_state_share|pct }} of them in New Jersey <span class="src">PSEO</span></span></div>
+    {% endif %}{% endfor %}
+  </div>
+  <div class="two-col">
+    <div>
+      <h3>Top industries, 1 vs. 5 years after</h3>
+      <div class="chart-box"><canvas id="industry-chart" aria-label="Industries of employment" role="img"></canvas></div>
+    </div>
+    <div>
+      <h3>Region of employment</h3>
+      <table class="data-table compact">
+        <thead><tr><th>Census division</th><th class="num">1 yr</th><th class="num">5 yr</th><th class="num">10 yr</th></tr></thead>
+        <tbody>{% for r in fl.regions if (r.y1 or 0) >= 0.5 %}<tr><td>{{ r.label }}</td><td class="num">{{ r.y1|pct }}</td><td class="num">{{ r.y5|pct }}</td><td class="num">{{ r.y10|pct }}</td></tr>{% endfor %}</tbody>
+      </table>
+      <p class="small muted">Middle Atlantic = NJ, NY, PA. Share of employed graduates.</p>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="panel">
+  <h2>First jobs and employers (Rutgers survey)</h2>
+  <div class="cards">
+    {% for rec in m.fds.majors %}{{ fds_card(rec, rec.major_name ~ ' major') }}{% endfor %}
+    {% if m.fds.school %}{{ fds_card(m.fds.school, m.fds.school_name ~ ' (all majors)') }}{% endif %}
+    {% if not m.fds.majors and not m.fds.school and m.fds.overall %}{{ fds_card(m.fds.overall, 'All Rutgers–New Brunswick graduates') }}{% endif %}
+  </div>
+  {% if not m.fds.majors %}<p class="small muted">No archived major-level page is available for this major, so school-level results are shown.</p>{% endif %}
+</section>
+
+<section class="panel">
+  <h2>National context</h2>
+  <div class="cards">
+    {% if m.nyfed %}{% set n = m.nyfed %}
+    <div class="card">
+      <h4>Recent grads nationwide: {{ n.major }}</h4>
+      <p class="muted small">NY Fed, ages 22–27 · {{ meta.versions.nyfed }}</p>
+      <dl class="kv">
+        <dt>Unemployment rate</dt><dd>{{ n.unemployment_rate|pct(1) }} <span class="muted">(all majors {{ n.overall.unemployment_rate|pct(1) }})</span></dd>
+        <dt>Underemployment rate</dt><dd>{{ n.underemployment_rate|pct(1) }} <span class="muted">(all {{ n.overall.underemployment_rate|pct(1) }})</span></dd>
+        <dt>Median wage, early career</dt><dd>{{ n.wage_early|money }} <span class="muted">(all {{ n.overall.wage_early|money }})</span></dd>
+        <dt>Median wage, mid-career</dt><dd>{{ n.wage_mid|money }} <span class="muted">(all {{ n.overall.wage_mid|money }})</span></dd>
+        <dt>Share with a graduate degree</dt><dd>{{ n.share_grad_degree|pct }}</dd>
+      </dl>
+    </div>
+    {% endif %}
+    {% if m.nace %}
+    <div class="card">
+      <h4>Employer salary projections: {{ m.nace.category }}</h4>
+      <p class="muted small">NACE Winter 2026 Salary Survey (Class of 2026, average base salary)</p>
+      <p class="big">{{ m.nace.avg_starting_salary|money }}</p>
+      <p class="small">{{ '%+.1f'|format(m.nace.pct_change) }}% vs. last year. <a href="{{ m.nace.source_url }}" rel="noopener">NACE summary</a></p>
+    </div>
+    {% endif %}
+  </div>
+  {% if m.bls %}
+  <h3>Occupations this major leads to</h3>
+  <p class="muted small">From the NCES CIP–SOC crosswalk, using {{ m.bls.basis }}. Employment-weighted growth {{ '%+.1f'|format(m.bls.growth_pct) }}%,
+    about {{ m.bls.openings_k|num }}k openings a year, typical wage {{ m.bls.weighted_median_wage|money }} (all experience levels).</p>
+  <div class="table-scroll">
+  <table class="data-table compact">
+    <thead><tr><th>Occupation</th><th class="num">Jobs (2025)</th><th class="num">Growth {{ m.bls.years }}</th><th class="num">Median wage</th><th>Typical entry education</th></tr></thead>
+    <tbody>{% for o in m.bls.occupations %}<tr><td>{{ o.title }}</td><td class="num">{{ (o.employment_k * 1000)|num }}</td><td class="num">{{ '%+.1f'|format(o.growth_pct) }}%</td><td class="num">{{ o.median_wage|money }}</td><td>{{ o.entry_education }}</td></tr>{% endfor %}</tbody>
+  </table>
+  </div>
+  {% endif %}
+</section>
+
+<section class="panel">
+  <h2>Caveats for this page</h2>
+  {% for key in ['scorecard','pseo','fds','nyfed','bls','nace'] %}{{ caveat_block(caveats[key]) }}{% endfor %}
+</section>
+{% endblock %}
+{% block scripts %}
+<script id="major-data" type="application/json">{{ m|tojson }}</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const m = JSON.parse(document.getElementById('major-data').textContent);
+  window.MTO.earningsChart('earnings-chart', m);
+  window.MTO.cohortChart('cohort-chart', m);
+  window.MTO.industryChart('industry-chart', m);
+});
+</script>
+{% endblock %}

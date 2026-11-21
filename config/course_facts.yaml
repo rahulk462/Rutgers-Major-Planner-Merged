@@ -1,0 +1,5 @@
+# Facts the SOC data gets wrong or leaves out. Merged over the downloaded data.
+# Keys: title, credits, prereq (raw text, parsed like SOC text; prefer prereq_overrides.yaml for fixes).
+courses:
+  "01:750:193": {credits: 4}     # SOC lists 0 (credits are by section). ASSUMPTION: check the catalog
+  "01:750:194": {credits: 4}     # ASSUMPTION: check the catalog

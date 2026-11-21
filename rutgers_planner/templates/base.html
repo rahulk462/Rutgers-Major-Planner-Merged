@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Rutgers Major Planner{% endblock %} · Rutgers–New Brunswick</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='site.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='nav.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  {% include "_nav.html" %}
+  <main class="wrap">
+    {% block subnav %}{% endblock %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="wrap site-footer">
+    {% block footer %}
+    <p>Rutgers Major Planner combines a Degree Navigator what-if tool, a graduation path planner and a
+      career-outcomes explorer for Rutgers–New Brunswick. It is a planning aid, not an official audit:
+      Degree Navigator and your advisor have the final word. Your record stays on this computer.</p>
+    {% endblock %}
+  </footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
