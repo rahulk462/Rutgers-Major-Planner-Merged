@@ -25,8 +25,12 @@ that used to be separate projects:
   (`data/soc/soc_nb.json`). Until you download terms yourself, the What-If page uses it for course
   titles, prerequisites and the course lookup.
 
-The Data Science tracks are defined for the What-If tool only; the planner doesn't have requirement
-files for them yet.
+Every program, including the five Data Science tracks and the minor, can be opened in both tools.
+The planner's Data Science files (`programs/ds-*.yaml`) are converted from the What-If definitions.
+A few of their courses (Data in Context `04:547:225`, `04:547:321`, some upper-level chemistry) aren't in
+the bundled course pack yet, so plans flag them as "offering unknown" and schedule them anyway.
+(Note: `gradplan soc --subjects ...` replaces a term's offering list with just those subjects, so
+re-download a term without `--subjects` to add courses to it.)
 
 ## Run it
 

@@ -51,6 +51,8 @@ def test_program_registry_joins_tools_and_outcomes():
     progs = {p["id"]: p for p in registry(load()[2])}
     assert progs["cs-bs"]["whatif"] and progs["cs-bs"]["planner"] and progs["cs-bs"]["cip4"] == "11.01"
     assert progs["ds-minor"]["whatif"] and progs["ds-minor"]["cip4"] == "30.70"
+    # Every program is plannable, Data Science tracks included.
+    assert all(p["whatif"] and p["planner"] for p in progs.values()), [k for k, p in progs.items() if not p["planner"]]
     assert progs["math-ba"]["outcomes"]["title"] == "Mathematics"
     assert cip_for("statmath-ba") == "27.05" and cip_for("nope") is None
 
@@ -83,6 +85,13 @@ def test_planner_builds_a_plan(client):
     d = r.get_json()
     assert d["graduation"] and d["terms"]
     assert client.post("/plan/api/plan", json={"config": "example", "programs": []}).status_code == 400
+
+
+@pytest.mark.parametrize("pid", ["ds-bs-cs", "ds-ba-stat", "ds-minor"])
+def test_planner_plans_data_science(client, pid):
+    r = client.post("/plan/api/plan", json={"config": "example", "programs": [pid], "plan": {"solver": "greedy"}})
+    assert r.status_code == 200, r.get_json()
+    assert not [i for i in r.get_json()["issues"] if i["level"] == "error"]
 
 
 def test_rejects_other_hosts_and_origins(client):
