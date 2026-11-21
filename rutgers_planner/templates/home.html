@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="home-hero">
+  <h1>Pick a major, see where you stand, and plan the way to graduation.</h1>
+  <p class="lede">Three Rutgers–New Brunswick tools in one place. They share your course record, the
+    same program definitions and the same course data, so each step picks up where the last one left off.</p>
+</section>
+
+<section class="steps-grid" aria-label="Tools">
+  <article class="step-card">
+    <h2><span class="step-n">1</span>Career outcomes</h2>
+    <p>Earnings 1, 5 and 10 years out, employment, top employers and job growth for {{ n_majors }} majors, next to national and New Jersey numbers.</p>
+    <div class="status">College Scorecard, Census PSEO, Rutgers First-Destination Survey, NY Fed, BLS.</div>
+    <a class="button" href="{{ url_for('outcomes.home') }}">Explore majors</a>
+  </article>
+  <article class="step-card">
+    <h2><span class="step-n">2</span>What-if majors</h2>
+    <p>Load your Degree Navigator audit (or a course CSV), add AP and transfer credit, and see how far you are from each major and minor if you switch or add one.</p>
+    <div class="status">
+      {% if record.courses %}<span class="ok">✓</span> {{ record.courses }} courses on record{% if record.manual %} ({{ record.manual }} added by you){% endif %}{% if record.when %}, from {{ record.source }} on {{ record.when }}{% endif %}.
+      {% else %}No record yet. Start here, or try the planner with the sample transcript.{% endif %}
+    </div>
+    <a class="button" href="{{ url_for('whatif.page') }}">Compare programs</a>
+  </article>
+  <article class="step-card">
+    <h2><span class="step-n">3</span>Graduation plan</h2>
+    <p>A term-by-term plan to graduation that respects prerequisites, when courses actually run and your credit limits, with the critical path and what-if scenarios.</p>
+    <div class="status">Reads the record from step 2 (config <code>my-record</code>). {{ 'Optimizer: OR-Tools CP-SAT.' if cpsat else 'OR-Tools not installed: greedy planner.' }}</div>
+    <a class="button" href="{{ url_for('planner.page') }}">Build a plan</a>
+  </article>
+</section>
+
+<section class="panel">
+  <h2>Programs you can plan here</h2>
+  <p class="hint">Each row links the same program across the three tools. Earnings are Rutgers–NB medians for the program's field (CIP code).</p>
+  <div class="table-scroll">
+  <table class="data-table">
+    <thead><tr><th>Program</th><th>Field (CIP)</th><th class="num">RU–NB, 1 yr</th><th class="num">RU–NB, 5 yr</th><th class="num">Job growth</th><th>Open in</th></tr></thead>
+    <tbody>
+    {% for p in programs %}
+      {% set o = p.outcomes or {} %}
+      <tr>
+        <td>{{ p.name }} <span class="muted small">{{ p.kind }}</span></td>
+        <td>{% if p.cip4 %}<a href="{{ url_for('outcomes.major', cip4=p.cip4) }}">{{ o.title or p.cip4 }}</a> <span class="muted">{{ p.cip4 }}</span>{% else %}—{% endif %}</td>
+        <td class="num">{{ o.rutgers_1yr|money }}</td>
+        <td class="num">{{ o.rutgers_5yr|money }}</td>
+        <td class="num">{% if o.growth_pct is not none and o.growth_pct is defined %}{{ '%+.1f'|format(o.growth_pct) }}%{% else %}—{% endif %}</td>
+        <td><div class="links-row">
+          {% if p.whatif %}<a href="{{ url_for('whatif.page') }}?compare={{ p.id }}">What-if</a>{% endif %}
+          {% if p.planner %}<a href="{{ url_for('planner.page') }}?programs={{ p.id }}">Plan</a>{% endif %}
+          {% if p.cip4 %}<a href="{{ url_for('outcomes.major', cip4=p.cip4) }}">Outcomes</a>{% endif %}
+        </div></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  <p class="footnote">Program requirements are condensed from the department pages (sources in each program file).
+    Minors share their field's earnings, which describe graduates who majored in it.</p>
+</section>
+{% endblock %}

@@ -1,0 +1,119 @@
+school,major_id,major_name,cip4
+sas,13,Africana Studies,05.02
+sas,14,Africana Studies,05.02
+sas,50,American Studies,05.01
+sas,70,Anthropology,45.02
+sas,71,Anthropology - Evolutionary,45.02
+sas,80,Art - Liberal Arts,50.07
+sas,82,Art History - Liberal Arts,50.07
+sas,98,Asian Studies,05.01
+sas,105,Astrophysics,40.02
+sas,119,Biological Sciences,26.01
+sas,122,Biomathematics,26.11
+sas,146,Cell Biology and Neuroscience,26.04
+sas,160,Chemistry,40.05
+sas,165,Chinese,16.03
+sas,175,Cinema Studies,50.06
+sas,190,Classical Civilization,16.12
+sas,192,Communication,09.01
+sas,195,Comparative Literature,16.01
+sas,198,Computer Science,11.01
+sas,202,Criminal Justice,43.01
+sas,203,Dance - Liberal Arts,50.03
+sas,216,"Ecology, Evolution and Natural Resources",26.13
+sas,219,Data Science,30.70
+sas,220,Economics,45.06
+sas,350,English,23.01
+sas,360,European Studies,05.01
+sas,377,Exercise Science,31.05
+sas,420,French,16.09
+sas,447,Genetics,26.08
+sas,450,Geography,45.07
+sas,460,Geology,40.06
+sas,470,German,16.05
+sas,501,Health Administration,51.07
+sas,510,History,54.01
+sas,533,Human Resource Management,52.10
+sas,547,Information Technology and Informatics,11.04
+sas,560,Italian,16.09
+sas,563,Jewish Studies,05.01
+sas,567,Journalism and Media Studies,09.04
+sas,578,Labor Studies and Employment Relations,45.99
+sas,590,Latin American Studies,05.01
+sas,595,Latino and Hispanic Caribbean Studies,05.02
+sas,615,Linguistics,16.01
+sas,628,Marine Sciences,40.06
+sas,640,Mathematics,27.01
+sas,667,Medieval Studies,30.13
+sas,680,Microbiology,26.05
+sas,685,Middle Eastern Studies Program,05.01
+sas,694,Molecular Biology & Biochemistry,26.02
+sas,700,Music,50.09
+sas,730,Philosophy,38.01
+sas,750,Physics,40.08
+sas,762,Planning and Public Policy,44.05
+sas,790,Political Science,45.10
+sas,810,Portuguese,16.09
+sas,830,Psychology,42.01
+sas,832,Public Health,51.22
+sas,833,Public Policy,44.05
+sas,840,Religion,38.02
+sas,860,Russian,16.04
+sas,910,Social Work,44.07
+sas,920,Sociology,45.11
+sas,940,Spanish,16.09
+sas,955,Sport Management,31.05
+sas,960,Statistics,27.05
+sas,961,Statistics - Mathematics,27.05
+sas,965,Theater Arts - Liberal Arts,50.05
+sas,971,Urban Planning,45.12
+sas,988,Women's and Gender Studies,05.02
+sas,185,Cognitive Science,30.25
+eng,21,Aerospace Engineering,14.02
+eng,73,Applied Science Engineering,14.13
+eng,116,Bioenvironmental Engineering,14.03
+eng,125,Biomedical Engineering,14.05
+eng,155,Chemical Engineering,14.07
+eng,180,Civil Engineering,14.08
+eng,332,Electrical and Computer Engineering,14.10
+eng,540,Industrial Engineering,14.35
+eng,635,Materials Science and Engineering,14.06
+eng,650,Mechanical Engineering,14.19
+business,10,Accounting,52.03
+business,136,Business Analytics and Information Technology,52.12
+business,390,Finance,52.08
+business,605,Leadership and Management,52.02
+business,630,Marketing,52.14
+business,799,Supply Chain and Marketing Science,52.13
+sebs,20,Agriculture and Food Systems,01.00
+sebs,67,Animal Sciences,01.09
+sebs,115,Biochemistry,26.02
+sebs,119,Biological Sciences,26.01
+sebs,126,Biotechnology,26.12
+sebs,216,"Ecology, Evolution and Natural Resources",26.13
+sebs,374,"Environmental Policy, Institutions and Behavior",03.02
+sebs,375,Environmental Sciences,03.01
+sebs,377,Exercise Science and Sport Studies,31.05
+sebs,400,Food Science,01.10
+sebs,550,Landscape Architecture,04.06
+sebs,573,Environmental Planning & Design,04.04
+sebs,628,Marine Sciences,40.06
+sebs,670,Meteorology,40.04
+sebs,680,Microbiology,26.05
+sebs,709,Nutritional Sciences,30.19
+sebs,776,Plant Science,01.11
+smlr,533,Human Resource Management,52.10
+smlr,578,Labor Studies and Employment Relations,45.99
+sci,192,Communication,09.01
+sci,547,Information Technology and Informatics,11.04
+sci,567,Journalism and Media Studies,09.04
+arts,81,Visual Arts,50.07
+arts,206,Dance,50.03
+arts,208,Design,50.04
+arts,702,Music,50.09
+arts,966,Theater Arts,50.05
+arts,211,Digital Filmmaking,50.06
+bloustein,501,Health Administration,51.07
+bloustein,832,Public Health,51.22
+bloustein,833,Public Policy,44.05
+bloustein,971,Planning: Urban,04.03

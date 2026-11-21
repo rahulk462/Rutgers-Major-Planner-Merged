@@ -1,0 +1,25 @@
+# --- your record: Degree Navigator session + data (keep local, never commit) ---
+personal/
+auth.json
+*.auth.json
+storage_state*.json
+.env
+.env.*
+credentials*
+secrets*
+*.sqlite
+*.sqlite3
+*.db
+config/me.yaml
+
+# --- python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+out/
+.DS_Store

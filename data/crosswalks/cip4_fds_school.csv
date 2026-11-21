@@ -1,0 +1,41 @@
+cip_prefix,school,note
+01,sebs,Agriculture & food
+03,sebs,Natural resources
+04.03,bloustein,Planning
+04.04,sebs,Environmental planning & design
+04.06,sebs,Landscape architecture
+05,sas,
+09,sci,Communication & journalism
+11.01,sas,Computer Science is in SAS
+11.04,sci,Information Technology & Informatics
+13,sas,
+14,eng,
+14.03,sebs,Bioenvironmental engineering
+16,sas,
+22,sas,
+23,sas,
+24,sas,
+26,sas,
+26.12,sebs,Biotechnology
+26.13,sebs,"Ecology, Evolution and Natural Resources"
+27,sas,
+30,sas,
+30.19,sebs,Nutritional sciences
+31,sebs,Exercise science
+38,sas,
+40,sas,
+40.04,sebs,Meteorology
+42,sas,
+43,sas,
+44,bloustein,
+44.07,ssw,Social work (BASW)
+45,sas,
+45.12,bloustein,Urban studies
+50,arts,
+51,sas,
+51.07,bloustein,Health administration
+51.22,bloustein,Public health
+51.38,ALL,Nursing (School of Nursing not on FDS site)
+52,business,
+52.10,smlr,Human resource management
+54,sas,

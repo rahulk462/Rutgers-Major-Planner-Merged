@@ -1,0 +1,28 @@
+{% macro caveat_block(c, open=false) %}
+<details class="caveat"{% if open %} open{% endif %}>
+  <summary><strong>{{ c.name }}</strong>{% if c.kind %} <span class="badge">{{ c.kind }}</span>{% endif %}</summary>
+  <ul>{% for p in c.points %}<li>{{ p }}</li>{% endfor %}</ul>
+</details>
+{% endmacro %}
+
+{% macro fds_card(rec, label) %}
+<div class="card">
+  <h4>{{ label }}</h4>
+  <p class="muted small">Class of {{ rec.class_year }} First-Destination Survey · knowledge rate {{ rec.knowledge_rate|pct(1) }}</p>
+  <dl class="kv">
+    <dt>Median starting salary</dt><dd>{{ rec.median_salary|money }} <span class="muted">(n = {{ rec.salary_n|num }})</span>
+      {% if rec.salary_n is not none and rec.salary_n < 30 %}<span class="warn" title="Fewer than 30 salaries reported">small sample</span>{% endif %}</dd>
+    <dt>Career outcomes rate</dt><dd>{{ rec.outcomes_rate|pct }}</dd>
+    <dt>Employed (FT/PT)</dt><dd>{{ rec.employed|pct }}</dd>
+    <dt>Further study</dt><dd>{{ rec.further_study|pct }}</dd>
+  </dl>
+  {% if rec.top_employers %}
+  <h5>Top hiring employers</h5>
+  <ol class="pill-list">{% for e in rec.top_employers %}<li>{{ e }}</li>{% endfor %}</ol>
+  {% endif %}
+  {% if rec.top_grad_schools %}
+  <h5>Top schools for further study</h5>
+  <ol class="pill-list">{% for e in rec.top_grad_schools %}<li>{{ e }}</li>{% endfor %}</ol>
+  {% endif %}
+</div>
+{% endmacro %}

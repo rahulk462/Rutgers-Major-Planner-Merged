@@ -1,0 +1,54 @@
+{% extends "outcomes/_base.html" %}
+{% from "outcomes/_macros.html" import caveat_block %}
+{% block title %}Sources and caveats{% endblock %}
+{% block content %}
+<h1>Sources and caveats</h1>
+<p class="lede">Every number on this site comes from a public source. They measure different people in different ways,
+  so a Rutgers figure should be compared with the national or New Jersey figure from the <em>same</em> source.</p>
+
+<section class="panel">
+  <h2>How the sources differ</h2>
+  <div class="table-scroll">
+  <table class="data-table compact">
+    <thead><tr><th>Source</th><th>Type</th><th>Who is counted</th><th>When</th><th>Level of detail</th></tr></thead>
+    <tbody>
+      <tr><td>College Scorecard</td><td>IRS tax records</td><td>Graduates with federal aid, working and not in school</td><td>1, 4, 5, 7 yrs after</td><td>Rutgers–NB by 4-digit CIP, plus national median</td></tr>
+      <tr><td>Census PSEO</td><td>State unemployment-insurance wage records</td><td>All graduates in covered jobs above an earnings floor</td><td>1, 5, 10 yrs after</td><td>Earnings by 4-digit CIP; industry &amp; region by 2-digit CIP</td></tr>
+      <tr><td>Rutgers First-Destination Survey</td><td>Self-reported survey</td><td>Respondents with a known outcome (see knowledge rate)</td><td>Within 6 months</td><td>School-level; a few majors</td></tr>
+      <tr><td>NY Fed recent grads</td><td>ACS survey (IPUMS)</td><td>National, ages 22–27 (mid-career 35–45)</td><td>Current year</td><td>~70 broad majors</td></tr>
+      <tr><td>BLS Employment Projections</td><td>Projections</td><td>All workers in linked occupations</td><td>{{ meta.versions.bls|replace('Employment Projections ', '') }}</td><td>Detailed occupations via CIP–SOC</td></tr>
+      <tr><td>NACE Salary Survey</td><td>Employer survey</td><td>Employers' planned offers to new grads</td><td>Class of 2026</td><td>4 broad categories (public summary)</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Caveats by source</h2>
+  {% for key, c in caveats.items() %}{{ caveat_block(c, open=true) }}{% endfor %}
+</section>
+
+<section class="panel">
+  <h2>Rutgers First-Destination Survey by school</h2>
+  <p class="muted small">Includes graduate and professional schools. Data from Internet Archive copies of careers46.rutgers.edu.</p>
+  <div class="table-scroll">
+  <table class="data-table compact">
+    <thead><tr><th>School</th><th>Class</th><th class="num">Median salary</th><th class="num">n</th><th class="num">Outcomes rate</th><th class="num">Knowledge rate</th></tr></thead>
+    <tbody>{% for r in meta.fds_schools %}<tr><td>{{ r.school }}</td><td>{{ r.class_year }}</td><td class="num">{{ r.median_salary|money }}</td><td class="num">{{ r.salary_n|num }}</td><td class="num">{{ r.outcomes_rate|pct }}</td><td class="num">{{ r.knowledge_rate|pct(1) }}</td></tr>{% endfor %}</tbody>
+  </table>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Data files and versions</h2>
+  <ul class="small">
+    <li>Scorecard: {{ meta.versions.scorecard }}</li>
+    <li>PSEO: {{ meta.versions.pseo }}</li>
+    <li>NY Fed: {{ meta.versions.nyfed }}</li>
+    <li>BLS: {{ meta.versions.bls }}</li>
+    <li>First-Destination Survey class years: {{ meta.versions.fds_class_years|join(', ') }}</li>
+  </ul>
+  <h3>Download links</h3>
+  <ul class="small links">{% for k, url in meta.sources.items() %}<li><code>{{ k }}</code>: <a href="{{ url }}" rel="noopener">{{ url }}</a></li>{% endfor %}</ul>
+</section>
+{% endblock %}

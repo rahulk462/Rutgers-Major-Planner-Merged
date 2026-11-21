@@ -1,0 +1,43 @@
+id: stat-minor
+name: Statistics minor
+kind: minor
+school: SAS
+default_credits: 3
+sources:
+- https://stat.rutgers.edu/minor
+retrieved: '2026-11-21'
+notes:
+- No course may fill two requirements.
+- 'Grade policy (not enforced by the planner): {"max_d": 2}'
+requirements:
+- id: sminor-computing
+  name: 960:390 or 295
+  type: choose
+  count: 1
+  from:
+  - 01:960:390
+  - 01:960:295
+- id: sminor-courses
+  name: Six more statistics courses
+  type: choose
+  count: 6
+  from:
+  - 01:960:*
+  - 01:198:142
+  - 01:640:477
+  - 01:640:481
+  rules:
+  - min: 3
+    from:
+    - 01:960:365
+    - 01:960:381
+    - 01:960:382
+    - 01:960:463
+    - 01:960:467
+    - 01:960:476
+    - 01:960:483
+    - 01:960:486
+    - 01:960:490
+    - 01:640:477
+    - 01:640:481
+    label: at least three upper-level (365, 381, 382, 463, 467, 476, 483, 486, 490, 640:477, 640:481)

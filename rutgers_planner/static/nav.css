@@ -1,0 +1,29 @@
+/* Shared site bar. Loaded on every page, including the two tool pages that bring their own
+   stylesheets, so everything here is namespaced under .rmp-bar and sets its own colors. */
+.rmp-bar {
+  --rmp-bg: #ffffff; --rmp-line: #e2e0da; --rmp-ink: #1c1c1e; --rmp-muted: #5f5e5a;
+  --rmp-accent: #cc0033; --rmp-accent-ink: #ffffff; --rmp-on: #fbe6eb;
+  background: var(--rmp-bg); border-bottom: 1px solid var(--rmp-line); color: var(--rmp-ink);
+  font: 15px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  position: relative; z-index: 20;
+}
+@media (prefers-color-scheme: dark) {
+  .rmp-bar { --rmp-bg: #1b1b1d; --rmp-line: #333336; --rmp-ink: #ececef; --rmp-muted: #a8a7a0;
+    --rmp-accent: #ff4d6d; --rmp-accent-ink: #1a0007; --rmp-on: #3a1720; }
+}
+.rmp-bar * { box-sizing: border-box; }
+.rmp-bar .rmp-row { max-width: 1240px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center;
+  gap: 8px 18px; flex-wrap: wrap; }
+.rmp-bar .rmp-brand { display: flex; align-items: center; gap: 9px; color: var(--rmp-ink); text-decoration: none;
+  font-weight: 750; font-size: 16px; white-space: nowrap; }
+.rmp-bar .rmp-mark { width: 26px; height: 26px; border-radius: 7px; background: var(--rmp-accent); color: var(--rmp-accent-ink);
+  display: grid; place-items: center; font-weight: 800; font-size: 14px; }
+.rmp-bar .rmp-links { display: flex; gap: 4px; flex-wrap: wrap; margin: 0; padding: 0; }
+.rmp-bar .rmp-links a { color: var(--rmp-muted); text-decoration: none; font-weight: 550; padding: 6px 10px;
+  border-radius: 8px; white-space: nowrap; }
+.rmp-bar .rmp-links a:hover { color: var(--rmp-ink); background: var(--rmp-on); }
+.rmp-bar .rmp-links a[aria-current="page"] { color: var(--rmp-accent); background: var(--rmp-on); }
+.rmp-bar .rmp-links a .rmp-step { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%;
+  border: 1px solid currentColor; font-size: 11px; margin-right: 6px; vertical-align: 1px; }
+.rmp-bar .rmp-note { margin-left: auto; color: var(--rmp-muted); font-size: 12.5px; }
+@media (max-width: 720px) { .rmp-bar .rmp-note { display: none; } .rmp-bar .rmp-links a { padding: 6px 7px; } }

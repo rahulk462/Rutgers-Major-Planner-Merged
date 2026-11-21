@@ -1,0 +1,47 @@
+# Example plan config. Copy it (e.g. to config/me.yaml) and edit.
+# Paths are relative to this file.
+
+student:
+  # Made-up sample transcript. config/my-record.yaml reads your real record instead
+  # (personal/data/audit.json, whatif.sqlite, manual_courses.json from the What-If tool).
+  transcript:
+    - ../examples/sample_transcript.csv
+  # Add anything missing by hand (AP/transfer use grade T; leave grade empty for in-progress)
+  extra_courses: []
+  # Credits already earned toward the 120. Leave null to add up the transcript.
+  credits_earned: null
+
+programs: [cs-bs, math-ba]
+
+plan:
+  start_term: Spring 2027          # first term to plan (Fall 2026 is in progress)
+  target_graduation: Spring 2029
+  min_credits: 12
+  max_credits: 18
+  summer: false
+  winter: false
+  summer_max_credits: 8
+  winter_max_credits: 4
+  total_credits_required: 120
+  fill_electives: true             # add open "elective / SAS Core" credits to reach min load and 120
+  locked: {}                       # e.g. {"01:198:344": "Fall 2027"}
+  hard_courses: [01:198:211, 01:198:344, 01:640:311, 01:640:411, 01:640:350, 01:640:351]
+  max_hard_per_term: 2
+  include: []                      # courses you want even if not required
+  exclude: []                      # courses never to pick
+  prefer: []                       # tie-breakers when choosing electives
+  avoid: [01:198:493, 01:198:494, 01:640:495, 01:640:496, 01:640:497, 01:640:498]   # independent study etc.
+  solver: cpsat                    # or greedy
+  objective: min_terms             # or balance
+  offering_threshold: 0.5          # offered in >= half the observed fall (spring...) terms -> predicted
+
+# Between-program double counting. Policies vary by school: check the catalog / dean's office.
+double_counting:
+  max_shared: null                 # default cap for any pair of programs (null = no cap)
+  pairs: {}                        # e.g. {"cs-bs+math-ba": 2}
+
+# What-if scenarios for `gradplan whatif` (first one is the baseline)
+scenarios:
+  Math + CS: [cs-bs, math-ba]
+  Math + CS + Statistics: [cs-bs, math-ba, stat-ba]
+  CS + Stats minor: [cs-bs, stat-minor]

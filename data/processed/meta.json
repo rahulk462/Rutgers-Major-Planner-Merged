@@ -1,0 +1,1367 @@
+{
+ "built": "2026-11-21",
+ "institution": "Rutgers University–New Brunswick",
+ "scope_note": "Rutgers–New Brunswick only; Camden and Newark campuses are excluded.",
+ "versions": {
+  "scorecard": "Most-Recent-Cohorts-Field-of-Study_10152026.zip",
+  "pseo": "PSEOE NJ 34 2001-2021 V4.14.1 2026Q2 pseopu_nj_20260715_1529",
+  "nyfed": "Updated: February 4, 2026",
+  "bls": "Employment Projections 2025–35",
+  "fds_class_years": [
+   2024,
+   2025
+  ]
+ },
+ "bls_total_growth": 3.5,
+ "fds_overall": {
+  "url": "https://careers46.rutgers.edu/Public/new_webpage_GradSurveyHome.cfm?school=ALL",
+  "school": "ALL",
+  "major_id": null,
+  "major_name": null,
+  "class_year": 2024,
+  "outcomes_rate": 84,
+  "employed": 63,
+  "further_study": 20,
+  "alternative": 1,
+  "median_salary": 70000,
+  "salary_n": 1979,
+  "avg_additional_salary": 12255,
+  "knowledge_rate": 90,
+  "top_employers": [
+   "Rutgers University",
+   "Amazon",
+   "Robert Wood Johnson University Hospital",
+   "Self-Employed",
+   "RWJBarnabas Health"
+  ],
+  "top_grad_schools": [
+   "Rutgers University",
+   "New York University",
+   "Columbia University In The City Of New York",
+   "The Johns Hopkins University",
+   "Rowan University"
+  ],
+  "majors_offered": [],
+  "source": "wayback",
+  "snapshot": ""
+ },
+ "fds_schools": [
+  {
+   "url": "https://careers46.rutgers.edu/Public/new_webpage_GradSurveyHome.cfm?school=ALL",
+   "school": "ALL",
+   "major_id": null,
+   "major_name": null,
+   "class_year": 2024,
+   "outcomes_rate": 84,
+   "employed": 63,
+   "further_study": 20,
+   "alternative": 1,
+   "median_salary": 70000,
+   "salary_n": 1979,
+   "avg_additional_salary": 12255,
+   "knowledge_rate": 90,
+   "top_employers": [
+    "Rutgers University",
+    "Amazon",
+    "Robert Wood Johnson University Hospital",
+    "Self-Employed",
+    "RWJBarnabas Health"
+   ],
+   "top_grad_schools": [
+    "Rutgers University",
+    "New York University",
+    "Columbia University In The City Of New York",
+    "The Johns Hopkins University",
+    "Rowan University"
+   ],
+   "majors_offered": [],
+   "source": "wayback",
+   "snapshot": ""
+  },
+  {
+   "url": "https://careers46.rutgers.edu/Public/new_webpage_GradSurveyHome.cfm?school=sas",
+   "school": "sas",
+   "major_id": null,
+   "major_name": null,
+   "class_year": 2024,
+   "outcomes_rate": 81,
+   "employed": 56,
+   "further_study": 24,
+   "alternative": 1,
+   "median_salary": 63000,
+   "salary_n": 902,
+   "avg_additional_salary": 13086,
+   "knowledge_rate": 90,
+   "top_employers": [
+    "Rutgers University",
+    "Amazon",
+    "RWJBarnabas Health",
+    "Robert Wood Johnson University Hospital",
+    "Self-Employed"
+   ],
+   "top_grad_schools": [
+    "Rutgers University",
+    "New York University",
+    "Columbia University In The City Of New York",
+    "The Johns Hopkins University",
+    "Seton Hall University"
+   ],
+   "majors_offered": [
+    {
+     "major_id": "13",
+     "name": "Africana Studies"
+    },
+    {
+     "major_id": "14",
+     "name": "Africana Studies"
+    },
+    {
+     "major_id": "50",
+     "name": "American Studies"
+    },
+    {
+     "major_id": "70",
+     "name": "Anthropology"
+    },
+    {
+     "major_id": "71",
+     "name": "Anthropology - Evolutionary"
+    },
+    {
+     "major_id": "80",
+     "name": "Art - Liberal Arts"
+    },
+    {
+     "major_id": "82",
+     "name": "Art History - Liberal Arts"
+    },
+    {
+     "major_id": "98",
+     "name": "Asian Studies"
+    },
+    {
+     "major_id": "105",
+     "name": "Astrophysics"
+    },
+    {
+     "major_id": "119",
+     "name": "Biological Sciences"
+    },
+    {
+     "major_id": "122",
+     "name": "Biomathematics"
+    },
+    {
+     "major_id": "146",
+     "name": "Cell Biology and Neuroscience"
+    },
+    {
+     "major_id": "160",
+     "name": "Chemistry"
+    },
+    {
+     "major_id": "165",
+     "name": "CHINESE"
+    },
+    {
+     "major_id": "175",
+     "name": "Cinema Studies"
+    },
+    {
+     "major_id": "190",
+     "name": "Classical Civilization"
+    },
+    {
+     "major_id": "192",
+     "name": "Communication"
+    },
+    {
+     "major_id": "195",
+     "name": "Comparative Literature"
+    },
+    {
+     "major_id": "198",
+     "name": "Computer Science"
+    },
+    {
+     "major_id": "202",
+     "name": "Criminal Justice"
+    },
+    {
+     "major_id": "203",
+     "name": "Dance - Liberal Arts"
+    },
+    {
+     "major_id": "216",
+     "name": "Ecology, Evolution and Natural Resources"
+    },
+    {
+     "major_id": "219",
+     "name": "Data Science"
+    },
+    {
+     "major_id": "220",
+     "name": "Economics"
+    },
+    {
+     "major_id": "350",
+     "name": "English"
+    },
+    {
+     "major_id": "360",
+     "name": "European Studies"
+    },
+    {
+     "major_id": "377",
+     "name": "Exercise Science"
+    },
+    {
+     "major_id": "420",
+     "name": "French"
+    },
+    {
+     "major_id": "447",
+     "name": "Genetics"
+    },
+    {
+     "major_id": "450",
+     "name": "Geography"
+    },
+    {
+     "major_id": "460",
+     "name": "Geology"
+    },
+    {
+     "major_id": "470",
+     "name": "German"
+    },
+    {
+     "major_id": "501",
+     "name": "Health Administration"
+    },
+    {
+     "major_id": "510",
+     "name": "History"
+    },
+    {
+     "major_id": "513",
+     "name": "History, French"
+    },
+    {
+     "major_id": "514",
+     "name": "History/Political Science"
+    },
+    {
+     "major_id": "533",
+     "name": "Human Resource Management"
+    },
+    {
+     "major_id": "547",
+     "name": "Information Technology and Informatics"
+    },
+    {
+     "major_id": "560",
+     "name": "Italian"
+    },
+    {
+     "major_id": "563",
+     "name": "Jewish Studies"
+    },
+    {
+     "major_id": "567",
+     "name": "Journalism and Media Studies"
+    },
+    {
+     "major_id": "578",
+     "name": "Labor Studies and Employment Relations"
+    },
+    {
+     "major_id": "590",
+     "name": "Latin American Studies"
+    },
+    {
+     "major_id": "595",
+     "name": "Latino and Hispanic Caribbean Studies"
+    },
+    {
+     "major_id": "615",
+     "name": "Linguistics"
+    },
+    {
+     "major_id": "628",
+     "name": "Marine Sciences"
+    },
+    {
+     "major_id": "640",
+     "name": "Mathematics"
+    },
+    {
+     "major_id": "667",
+     "name": "Medieval Studies"
+    },
+    {
+     "major_id": "680",
+     "name": "Microbiology"
+    },
+    {
+     "major_id": "685",
+     "name": "Middle Eastern Studies Program"
+    },
+    {
+     "major_id": "694",
+     "name": "Molecular Biology & Biochemistry"
+    },
+    {
+     "major_id": "700",
+     "name": "Music"
+    },
+    {
+     "major_id": "730",
+     "name": "Philosophy"
+    },
+    {
+     "major_id": "750",
+     "name": "Physics"
+    },
+    {
+     "major_id": "762",
+     "name": "Planning and Public Policy"
+    },
+    {
+     "major_id": "790",
+     "name": "Political Science"
+    },
+    {
+     "major_id": "810",
+     "name": "Portuguese"
+    },
+    {
+     "major_id": "830",
+     "name": "Psychology"
+    },
+    {
+     "major_id": "832",
+     "name": "Public Health"
+    },
+    {
+     "major_id": "833",
+     "name": "Public Policy"
+    },
+    {
+     "major_id": "840",
+     "name": "Religion"
+    },
+    {
+     "major_id": "860",
+     "name": "Russian"
+    },
+    {
+     "major_id": "910",
+     "name": "Social Work"
+    },
+    {
+     "major_id": "920",
+     "name": "Sociology"
+    },
+    {
+     "major_id": "940",
+     "name": "Spanish"
+    },
+    {
+     "major_id": "955",
+     "name": "Sport Management"
+    },
+    {
+     "major_id": "960",
+     "name": "Statistics"
+    },
+    {
+     "major_id": "961",
+     "name": "Statistics - Mathematics"
+    },
+    {
+     "major_id": "965",
+     "name": "Theater Arts - Liberal Arts"
+    },
+    {
+     "major_id": "971",
+     "name": "Urban Planning"
+    },
+    {
+     "major_id": "988",
+     "name": "Women's and Gender Studies"
+    },
+    {
+     "major_id": "185",
+     "name": "Cognitive Science"
+    }
+   ],
+   "source": "wayback",
+   "snapshot": ""
+  },
+  {
+   "url": "https://careers46.rutgers.edu/public/new_webpage_GradSurveyHome.cfm?school=eng",
+   "school": "eng",
+   "major_id": null,
+   "major_name": null,
+   "class_year": 2024,
+   "outcomes_rate": 85,
+   "employed": 64,
+   "further_study": 20,
+   "alternative": 1,
+   "median_salary": 80000,
+   "salary_n": 275,
+   "avg_additional_salary": 12551,
+   "knowledge_rate": 92.3,
+   "top_employers": [
+    "Lockheed Martin",
+    "Rutgers University",
+    "L'Oréal",
+    "Bristol-Myers Squibb",
+    "Merck & Co."
+   ],
+   "top_grad_schools": [
+    "Rutgers University",
+    "Georgia Institute Of Technology",
+    "Columbia University In The City Of New York",
+    "New York University",
+    "Massachusetts Institute Of Technology"
+   ],
+   "majors_offered": [
+    {
+     "major_id": "73",
+     "name": "Applied Science Engineering"
+    },
+    {
+     "major_id": "116",
+     "name": "Bioenvironmental Engineering"
+    },
+    {
+     "major_id": "117",
+     "name": "Bioenvironmental Engineering"
+    },
+    {
+     "major_id": "125",
+     "name": "Biomedical Engineering"
+    },
+    {
+     "major_id": "137",
+     "name": "Business and Science"
+    },
+    {
+     "major_id": "155",
+     "name": "Chemical Engineering"
+    },
+    {
+     "major_id": "180",
+     "name": "Civil Engineering"
+    },
+    {
+     "major_id": "332",
+     "name": "Electrical and Computer Engineering"
+    },
+    {
+     "major_id": "333",
+     "name": "Electrical & Computer Engineering"
+    },
+    {
+     "major_id": "540",
+     "name": "Industrial Engineering"
+    },
+    {
+     "major_id": "635",
+     "name": "Materials Science and Engineering"
+    },
+    {
+     "major_id": "650",
+     "name": "Mechanical Engineering"
+    },
+    {
+     "major_id": "651",
+     "name": "Mechanical Engineering"
+    },
+    {
+     "major_id": "731",
+     "name": "Packaging Engineering"
+    },
+    {
+     "major_id": "366",
+     "name": "Environmental Engineering"
+    },
+    {
+     "major_id": "21",
+     "name": "Aerospace Engineering"
+    }
+   ],
+   "source": "wayback",
+   "snapshot": ""
+  },
+  {
+   "url": "https://careers46.rutgers.edu/Public/new_webpage_GradSurveyHome.cfm?school=business",
+   "school": "business",
+   "major_id": null,
+   "major_name": null,
+   "class_year": 2025,
+   "outcomes_rate": 90,
+   "employed": 77,
+   "further_study": 1,
+   "alternative": 1,
+   "median_salary": 76000,
+   "salary_n": 293,
+   "avg_additional_salary": 9924,
+   "knowledge_rate": 89.6,
+   "top_employers": [
+    "PricewaterhouseCoopers (PwC)",
+    "Bank of America Corporation",
+    "Deloitte",
+    "Unknown",
+    "Ernst & Young (EY)"
+   ],
+   "top_grad_schools": [
+    "Rutgers University",
+    "Columbia University In The City Of New York",
+    "Johns Hopkins University",
+    "Carnegie Mellon University",
+    "University Of Southern California"
+   ],
+   "majors_offered": [
+    {
+     "major_id": "10",
+     "name": "Accounting"
+    },
+    {
+     "major_id": "136",
+     "name": "Business Analytics and Information Technology"
+    },
+    {
+     "major_id": "390",
+     "name": "Finance"
+    },
+    {
+     "major_id": "605",
+     "name": "Leadership and Management"
+    },
+    {
+     "major_id": "630",
+     "name": "Marketing"
+    },
+    {
+     "major_id": "799",
+     "name": "Supply Chain and Marketing Science"
+    }
+   ],
+   "source": "wayback",
+   "snapshot": ""
+  },
+  {
+   "url": "https://careers46.rutgers.edu/Public/new_webpage_GradSurveyHome.cfm?school=sebs",
+   "school": "sebs",
+   "major_id": null,
+   "major_name": null,
+   "class_year": 2024,
+   "outcomes_rate": 84,
+   "employed": 54,
+   "further_study": 28,
+   "alternative": 1,
+   "median_salary": 54080,
+   "salary_n": 108,
+   "avg_additional_salary": 5687,
+   "knowledge_rate": 92.7,
+   "top_employers": [
+    "Rutgers University",
+    "New Jersey Department of Environmental Protection",
+    "RWJBarnabas Health",
+    "Bristol-Myers Squibb",
+    "Johnson & Johnson"
+   ],
+   "top_grad_schools": [
+    "Rutgers University",
+    "New York University",
+    "Temple University",
+    "Raritan Valley Community College",
+    "Bergen Community College"
+   ],
+   "majors_offered": [
+    {
+     "major_id": "20",
+     "name": "Agriculture and Food Systems"
+    },
+    {
+     "major_id": "67",
+     "name": "Animal Sciences"
+    },
+    {
+     "major_id": "115",
+     "name": "Biochemistry"
+    },
+    {
+     "major_id": "117",
+     "name": "Bioenvironmental Engineering"
+    },
+    {
+     "major_id": "119",
+     "name": "Biological Sciences"
+    },
+    {
+     "major_id": "126",
+     "name": "Biotechnology"
+    },
+    {
+     "major_id": "216",
+     "name": "Ecology, Evolution and Natural Resources"
+    },
+    {
+     "major_id": "373",
+     "name": "Environmental And Business Economics"
+    },
+    {
+     "major_id": "374",
+     "name": "Environmental Policy, Institutions and Behavior"
+    },
+    {
+     "major_id": "375",
+     "name": "Environmental Sciences"
+    },
+    {
+     "major_id": "377",
+     "name": "Exercise Science and Sport Studies"
+    },
+    {
+     "major_id": "400",
+     "name": "Food Science"
+    },
+    {
+     "major_id": "550",
+     "name": "Landscape Architecture"
+    },
+    {
+     "major_id": "573",
+     "name": "Environmental Planning & Design"
+    },
+    {
+     "major_id": "628",
+     "name": "Marine Sciences"
+    },
+    {
+     "major_id": "670",
+     "name": "Meteorology"
+    },
+    {
+     "major_id": "680",
+     "name": "Microbiology"
+    },
+    {
+     "major_id": "709",
+     "name": "Nutritional Sciences"
+    },
+    {
+     "major_id": "776",
+     "name": "Plant Science"
+    },
+    {
+     "major_id": "832",
+     "name": "Public Health"
+    },
+    {
+     "major_id": "370",
+     "name": "Entomology"
+    },
+    {
+     "major_id": "366",
+     "name": "Environmental Engineering"
+    },
+    {
+     "major_id": "20",
+     "name": "Agriculture and Food Systems"
+    },
+    {
+     "major_id": "67",
+     "name": "Animal Sciences"
+    },
+    {
+     "major_id": "115",
+     "name": "Biochemistry"
+    },
+    {
+     "major_id": "117",
+     "name": "Bioenvironmental Engineering"
+    },
+    {
+     "major_id": "119",
+     "name": "Biological Sciences"
+    },
+    {
+     "major_id": "126",
+     "name": "Biotechnology"
+    },
+    {
+     "major_id": "216",
+     "name": "Ecology, Evolution and Natural Resources"
+    },
+    {
+     "major_id": "373",
+     "name": "Environmental And Business Economics"
+    },
+    {
+     "major_id": "374",
+     "name": "Environmental Policy, Institutions and Behavior"
+    },
+    {
+     "major_id": "375",
+     "name": "Environmental Sciences"
+    },
+    {
+     "major_id": "377",
+     "name": "Exercise Science and Sport Studies"
+    },
+    {
+     "major_id": "400",
+     "name": "Food Science"
+    },
+    {
+     "major_id": "550",
+     "name": "Landscape Architecture"
+    },
+    {
+     "major_id": "573",
+     "name": "Environmental Planning and Design"
+    },
+    {
+     "major_id": "628",
+     "name": "Marine Sciences"
+    },
+    {
+     "major_id": "670",
+     "name": "Meteorology"
+    },
+    {
+     "major_id": "680",
+     "name": "Microbiology"
+    },
+    {
+     "major_id": "709",
+     "name": "Nutritional Sciences"
+    },
+    {
+     "major_id": "776",
+     "name": "Plant Science"
+    },
+    {
+     "major_id": "832",
+     "name": "Public Health"
+    },
+    {
+     "major_id": "370",
+     "name": "Entomology"
+    }
+   ],
+   "source": "wayback",
+   "snapshot": ""
+  },
+  {
+   "url": "https://careers46.rutgers.edu/public/new_webpage_GradSurveyHome.cfm?school=smlr",
+   "school": "smlr",
+   "major_id": null,
+   "major_name": null,
+   "class_year": 2024,
+   "outcomes_rate": 91,
+   "employed": 69,
+   "further_study": 21,
+   "alternative": 1,
+   "median_salary": 67300,
+   "salary_n": 106,
+   "avg_additional_salary": 6917,
+   "knowledge_rate": 91.6,
+   "top_employers": [
+    "Rutgers University",
+    "Amazon",
+    "PSE&G",
+    "Port Authority Of New York & New Jersey",
+    "Atrium Staffing"
+   ],
+   "top_grad_schools": [
+    "Rutgers University",
+    "New York University",
+    "University Of Pennsylvania",
+    "Northwestern University",
+    "Bergen Community College"
+   ],
+   "majors_offered": [
+    {
+     "major_id": "533",
+     "name": "Human Resource Management"
+    },
+    {
+     "major_id": "578",
+     "name": "Labor Studies and Employment Relations"
+    },
+    {
+     "major_id": "579",
+     "name": "Labor and Employment Relations"
+    }
+   ],
+   "source": "wayback",
+   "snapshot": ""
+  },
+  {
+   "url": "https://careers46.rutgers.edu/Public/new_webpage_GradSurveyHome.cfm?school=sci",
+   "school": "sci",
+   "major_id": null,
+   "major_name": null,
+   "class_year": 2024,
+   "outcomes_rate": 80,
+   "employed": 69,
+   "further_study": 11,
+   "alternative": 0,
+   "median_salary": 60000,
+   "salary_n": 162,
+   "avg_additional_salary": 9123,
+   "knowledge_rate": 89.5,
+   "top_employers": [
+    "Rutgers University",
+    "Amazon",
+    "Bank of America Merrill Lynch",
+    "JPMorgan Chase & Co.",
+    "MJH Life Sciences"
+   ],
+   "top_grad_schools": [
+    "Rutgers University",
+    "Columbia University In The City Of New York",
+    "New York University",
+    "Northwestern University",
+    "University Of Southern California"
+   ],
+   "majors_offered": [
+    {
+     "major_id": "192",
+     "name": "Communication"
+    },
+    {
+     "major_id": "194",
+     "name": "Communication and Information Studies"
+    },
+    {
+     "major_id": "547",
+     "name": "Information Technology and Informatics"
+    },
+    {
+     "major_id": "567",
+     "name": "Journalism and Media Studies"
+    },
+    {
+     "major_id": "610",
+     "name": "Library and Information Science"
+    },
+    {
+     "major_id": "503",
+     "name": "Health Communication and Information"
+    }
+   ],
+   "source": "wayback",
+   "snapshot": ""
+  },
+  {
+   "url": "https://careers46.rutgers.edu/Public/new_webpage_GradSurveyHome.cfm?school=arts",
+   "school": "arts",
+   "major_id": null,
+   "major_name": null,
+   "class_year": 2024,
+   "outcomes_rate": 80,
+   "employed": 68,
+   "further_study": 11,
+   "alternative": 0,
+   "median_salary": 60000,
+   "salary_n": 23,
+   "avg_additional_salary": null,
+   "knowledge_rate": 91.4,
+   "top_employers": [
+    "Self-Employed",
+    "Rutgers University",
+    "Puffin Store NJ",
+    "YMCA",
+    "Alliance Artist Management"
+   ],
+   "top_grad_schools": [
+    "Rutgers University",
+    "Adelphi University",
+    "California Institute Of The Arts",
+    "Capella University",
+    "Columbia University In The City Of New York"
+   ],
+   "majors_offered": [
+    {
+     "major_id": "80",
+     "name": "Art"
+    },
+    {
+     "major_id": "81",
+     "name": "Visual Arts"
+    },
+    {
+     "major_id": "203",
+     "name": "Dance - Liberal Arts"
+    },
+    {
+     "major_id": "206",
+     "name": "Dance"
+    },
+    {
+     "major_id": "208",
+     "name": "Design"
+    },
+    {
+     "major_id": "700",
+     "name": "Music - Liberal Arts"
+    },
+    {
+     "major_id": "702",
+     "name": "Music"
+    },
+    {
+     "major_id": "965",
+     "name": "Theater"
+    },
+    {
+     "major_id": "966",
+     "name": "Theater Arts"
+    },
+    {
+     "major_id": "211",
+     "name": "Digital Filmmaking"
+    }
+   ],
+   "source": "wayback",
+   "snapshot": ""
+  },
+  {
+   "url": "https://careers46.rutgers.edu/Public/new_webpage_GradSurveyHome.cfm?school=education",
+   "school": "education",
+   "major_id": null,
+   "major_name": null,
+   "class_year": 2024,
+   "outcomes_rate": 91,
+   "employed": 83,
+   "further_study": 6,
+   "alternative": 1,
+   "median_salary": 67031,
+   "salary_n": 85,
+   "avg_additional_salary": 4000,
+   "knowledge_rate": 92.4,
+   "top_employers": [
+    "Rutgers University",
+    "Franklin Township Board of Education",
+    "Bound Brook School District",
+    "Circle Care Services",
+    "Freehold Township School District"
+   ],
+   "top_grad_schools": [
+    "Rutgers University",
+    "Nova Southeastern University",
+    "Rowan University",
+    "Syracuse University"
+   ],
+   "majors_offered": [
+    {
+     "major_id": "207",
+     "name": "Dance Education"
+    },
+    {
+     "major_id": "230",
+     "name": "Educational Administration & Supervision"
+    },
+    {
+     "major_id": "233",
+     "name": "Education: Adult and Continuing"
+    },
+    {
+     "major_id": "245",
+     "name": "Education: College Student Affairs"
+    },
+    {
+     "major_id": "251",
+     "name": "Education: Elementary/Early Childhood"
+    },
+    {
+     "major_id": "252",
+     "name": "Education: English"
+    },
+    {
+     "major_id": "253",
+     "name": "Education: Language"
+    },
+    {
+     "major_id": "254",
+     "name": "Mathematics Education"
+    },
+    {
+     "major_id": "256",
+     "name": "Education: Science"
+    },
+    {
+     "major_id": "257",
+     "name": "Education: Social Studies"
+    },
+    {
+     "major_id": "260",
+     "name": "Educational Leadership"
+    },
+    {
+     "major_id": "262",
+     "name": "Education: Design Of Learning Environments"
+    },
+    {
+     "major_id": "265",
+     "name": "Education Culture and Society"
+    },
+    {
+     "major_id": "267",
+     "name": "Teacher Leadership"
+    },
+    {
+     "major_id": "291",
+     "name": "Education: Statistics And Measurement"
+    },
+    {
+     "major_id": "293",
+     "name": "Special Education"
+    },
+    {
+     "major_id": "295",
+     "name": "Learning, Cognition and Development"
+    },
+    {
+     "major_id": "297",
+     "name": "Education: Counseling Psychology"
+    },
+    {
+     "major_id": "299",
+     "name": "Education: Reading"
+    },
+    {
+     "major_id": "310",
+     "name": "Education: Social and Philosophical Foundations"
+    },
+    {
+     "major_id": "300",
+     "name": "Education"
+    },
+    {
+     "major_id": "507",
+     "name": "Higher Education"
+    },
+    {
+     "major_id": "618",
+     "name": "Literacy Education"
+    }
+   ],
+   "source": "wayback",
+   "snapshot": ""
+  },
+  {
+   "url": "https://careers46.rutgers.edu/Public/new_webpage_GradSurveyHome.cfm?school=bloustein",
+   "school": "bloustein",
+   "major_id": null,
+   "major_name": null,
+   "class_year": 2024,
+   "outcomes_rate": 89,
+   "employed": 57,
+   "further_study": 31,
+   "alternative": 0,
+   "median_salary": 62000,
+   "salary_n": 96,
+   "avg_additional_salary": 6071,
+   "knowledge_rate": 93.6,
+   "top_employers": [
+    "RWJBarnabas Health",
+    "Rutgers University",
+    "Atlantic Health System",
+    "Robert Wood Johnson University Hospital",
+    "Hackensack Meridian Health"
+   ],
+   "top_grad_schools": [
+    "Rutgers University",
+    "Raritan Valley Community College",
+    "Brookdale Community College",
+    "Columbia University In The City Of New York",
+    "Bergen Community College"
+   ],
+   "majors_offered": [
+    {
+     "major_id": "501",
+     "name": "Health Administration"
+    },
+    {
+     "major_id": "762",
+     "name": "Planning and Public Policy"
+    },
+    {
+     "major_id": "816",
+     "name": "Public Informatics"
+    },
+    {
+     "major_id": "832",
+     "name": "Public Health"
+    },
+    {
+     "major_id": "833",
+     "name": "Public Policy"
+    },
+    {
+     "major_id": "971",
+     "name": "Planning: Urban"
+    },
+    {
+     "major_id": "970",
+     "name": "Urban Planning and Policy Development"
+    }
+   ],
+   "source": "wayback",
+   "snapshot": ""
+  },
+  {
+   "url": "https://careers46.rutgers.edu/public/new_webpage_GradSurveyHome.cfm?school=pharm",
+   "school": "pharm",
+   "major_id": null,
+   "major_name": null,
+   "class_year": 2024,
+   "outcomes_rate": 91,
+   "employed": 84,
+   "further_study": 7,
+   "alternative": 0,
+   "median_salary": 60000,
+   "salary_n": 48,
+   "avg_additional_salary": 5666,
+   "knowledge_rate": 95.7,
+   "top_employers": [
+    "Rutgers University",
+    "CVS Health",
+    "Walgreens",
+    "Hackensack Meridian Health",
+    "Novo Nordisk"
+   ],
+   "top_grad_schools": [
+    "Rutgers University"
+   ],
+   "majors_offered": [
+    {
+     "major_id": "720",
+     "name": "Pharmacy/pharmaceutical Sciences"
+    }
+   ],
+   "source": "wayback",
+   "snapshot": ""
+  },
+  {
+   "url": "https://careers46.rutgers.edu/Public/new_webpage_GradSurveyHome.cfm?school=ssw",
+   "school": "ssw",
+   "major_id": null,
+   "major_name": null,
+   "class_year": 2024,
+   "outcomes_rate": 86,
+   "employed": 74,
+   "further_study": 10,
+   "alternative": 0,
+   "median_salary": 60000,
+   "salary_n": 162,
+   "avg_additional_salary": 2483,
+   "knowledge_rate": 90.4,
+   "top_employers": [
+    "Rutgers University",
+    "Self-Employed",
+    "Catholic Charities",
+    "Department Of Child Protection And Permanency",
+    "Hackensack Meridian Health"
+   ],
+   "top_grad_schools": [
+    "Rutgers University",
+    "Fordham University",
+    "Auburn University",
+    "Camden County College",
+    "City College Of San Francisco"
+   ],
+   "majors_offered": [
+    {
+     "major_id": "910",
+     "name": "Social Work"
+    }
+   ],
+   "source": "wayback",
+   "snapshot": ""
+  },
+  {
+   "url": "https://careers46.rutgers.edu/Public/new_webpage_GradSurveyHome.cfm?school=Psych",
+   "school": "Psych",
+   "major_id": null,
+   "major_name": null,
+   "class_year": 2024,
+   "outcomes_rate": 100,
+   "employed": 48,
+   "further_study": 51,
+   "alternative": 0,
+   "median_salary": 65000,
+   "salary_n": 14,
+   "avg_additional_salary": null,
+   "knowledge_rate": 87.3,
+   "top_employers": [
+    "Rutgers University",
+    "Children's Specialized Hospital",
+    "Montefiore Health System",
+    "New York City Health and Hospitals",
+    "Self-Employed"
+   ],
+   "top_grad_schools": [
+    "Rutgers University",
+    "City University Of New York (cuny)",
+    "Nova Southeastern University",
+    "Philadelphia College Of Osteopathic Medicine",
+    "University Of Florida"
+   ],
+   "majors_offered": [
+    {
+     "major_id": "821",
+     "name": "Clinical Psychology"
+    },
+    {
+     "major_id": "826",
+     "name": "School Psychology"
+    },
+    {
+     "major_id": "829",
+     "name": "Organizational Psychology"
+    },
+    {
+     "major_id": "77",
+     "name": "Applied Behavior Analysis"
+    },
+    {
+     "major_id": "76",
+     "name": "Applied Psychology"
+    }
+   ],
+   "source": "wayback",
+   "snapshot": ""
+  },
+  {
+   "url": "https://careers46.rutgers.edu/Public/new_webpage_GradSurveyHome.cfm?school=graduate",
+   "school": "graduate",
+   "major_id": null,
+   "major_name": null,
+   "class_year": 2024,
+   "outcomes_rate": 85,
+   "employed": 72,
+   "further_study": 12,
+   "alternative": 1,
+   "median_salary": 80000,
+   "salary_n": 330,
+   "avg_additional_salary": 20610,
+   "knowledge_rate": 87.6,
+   "top_employers": [
+    "Rutgers University",
+    "Bristol-Myers Squibb",
+    "Amazon",
+    "L'Oréal",
+    "Merck & Co."
+   ],
+   "top_grad_schools": [
+    "Rutgers University",
+    "New York University",
+    "Rowan University",
+    "Arizona State University",
+    "Boston University"
+   ],
+   "majors_offered": [],
+   "source": "wayback",
+   "snapshot": ""
+  }
+ ],
+ "caveats": {
+  "scorecard": {
+   "name": "College Scorecard (U.S. Dept. of Education)",
+   "kind": "Administrative tax data (IRS)",
+   "points": [
+    "Earnings cover only graduates who received federal financial aid (Pell grants or federal loans). Students who paid without federal aid are not counted, so results can differ from the full class.",
+    "Medians are for graduates who were working and not enrolled in further schooling in the measurement year.",
+    "Cells with too few graduates are privacy-suppressed (shown as “suppressed”), which is common for small majors.",
+    "National medians (EARN_MDN_*_NAT) pool every institution's bachelor's graduates in the same 4-digit CIP code.",
+    "Programs are grouped at the 4-digit CIP level, so one CIP can combine several Rutgers majors."
+   ]
+  },
+  "pseo": {
+   "name": "Post-Secondary Employment Outcomes (U.S. Census Bureau)",
+   "kind": "Administrative wage records (state UI records via LEHD)",
+   "points": [
+    "Covers all graduates reported by New Jersey's partner institutions, regardless of financial aid, but only those found in covered employment with earnings above a minimum threshold.",
+    "Self-employed people, most federal workers, and people working abroad are missing.",
+    "Earnings are pooled over several graduation cohorts and adjusted for inflation by the Census Bureau.",
+    "Industry and region destinations are published only at the 2-digit CIP level (e.g. all Engineering), not by individual major.",
+    "Values that do not meet Census disclosure standards are suppressed. Ten-year earnings exist only for older cohorts.",
+    "New Jersey institutions joined PSEO in the August 2026 release; NJ statewide numbers combine every NJ partner school."
+   ]
+  },
+  "fds": {
+   "name": "Rutgers First-Destination Survey (Career Exploration and Success)",
+   "kind": "Self-reported survey",
+   "points": [
+    "Salaries and employers are mostly self-reported by graduates within about six months of graduation (NACE standards also let schools add outcomes verified from other sources).",
+    "The knowledge rate is the share of graduates with a known outcome. A lower knowledge rate means more risk that respondents differ from non-respondents.",
+    "Median salaries for small groups (low n) are unstable.",
+    "Most figures here are school-level (e.g. all of SAS), not major-level, because the public site only shows per-major pages one at a time. The live site was down when this data was collected, so the numbers come from Internet Archive snapshots; class year is shown with every figure."
+   ]
+  },
+  "nyfed": {
+   "name": "New York Fed: The Labor Market for Recent College Graduates",
+   "kind": "Survey data (American Community Survey via IPUMS)",
+   "points": [
+    "National, not Rutgers-specific. Recent graduates are ages 22–27 with a bachelor's degree; mid-career is ages 35–45.",
+    "Underemployment means working in a job that typically does not require a college degree.",
+    "NY Fed majors are broader ACS categories, matched to CIP codes with a hand-built crosswalk (data/crosswalks/nyfed_major_cip.csv)."
+   ]
+  },
+  "bls": {
+   "name": "BLS Employment Projections + NCES CIP-to-SOC crosswalk",
+   "kind": "Projections and wage estimates",
+   "points": [
+    "Job growth is BLS's 10-year projection for occupations linked to the major by the official CIP-to-SOC crosswalk; it is not a forecast for any single graduate.",
+    "Where possible, only occupations that typically require a bachelor's degree or higher are used.",
+    "Median wages are for all workers in the occupation (all ages, all experience levels), not new graduates."
+   ]
+  },
+  "nace": {
+   "name": "NACE Winter 2026 Salary Survey (published summary)",
+   "kind": "Employer survey",
+   "points": [
+    "Projected average base starting salaries for the Class of 2026, reported by NACE member employers (150 responses).",
+    "Only broad categories are public; the detailed by-major table is members-only, so it is not used here.",
+    "Averages are pulled up by high salaries and are not comparable to the medians from other sources."
+   ]
+  },
+  "not_used": {
+   "name": "Sources considered but not used",
+   "kind": "",
+   "points": [
+    "ACS/IPUMS microdata needs a registered IPUMS account; the NY Fed tables above are built from the same ACS data.",
+    "LinkedIn was not scraped (against its terms of service).",
+    "Rutgers–Camden and Rutgers–Newark were left out by request."
+   ]
+  }
+ },
+ "sources": {
+  "scorecard_fos": "https://ed-public-download.scorecard.network/downloads/Most-Recent-Cohorts-Field-of-Study_10152026.zip",
+  "pseoe_nj": "https://lehd.ces.census.gov/data/pseo/latest_release/nj/pseoe_nj.csv.gz",
+  "pseof_nj": "https://lehd.ces.census.gov/data/pseo/latest_release/nj/pseof_nj.csv.gz",
+  "pseo_nj_institutions": "https://lehd.ces.census.gov/data/pseo/latest_release/nj/pseo_nj_institutions.csv",
+  "pseo_version": "https://lehd.ces.census.gov/data/pseo/latest_release/nj/version_pseo.txt",
+  "pseo_label_industry": "https://lehd.ces.census.gov/data/schema/latest/label_industry.csv",
+  "pseo_label_geography_division": "https://lehd.ces.census.gov/data/schema/latest/label_geography_division.csv",
+  "pseo_label_cipcode": "https://lehd.ces.census.gov/data/schema/latest/label_cipcode.csv",
+  "pseo_label_degree_level": "https://lehd.ces.census.gov/data/schema/latest/label_degree_level.csv",
+  "pseo_label_agg_level_pseo": "https://lehd.ces.census.gov/data/schema/latest/label_agg_level_pseo.csv",
+  "pseo_label_flags": "https://lehd.ces.census.gov/data/schema/latest/label_flags.csv",
+  "pseo_label_inst_level": "https://lehd.ces.census.gov/data/schema/latest/label_inst_level.csv",
+  "pseo_label_geo_level": "https://lehd.ces.census.gov/data/schema/latest/label_geo_level.csv",
+  "pseo_label_geography": "https://lehd.ces.census.gov/data/schema/latest/label_geography.csv",
+  "nyfed": "https://www.newyorkfed.org/medialibrary/Research/Interactives/Data/college-labor-market/College-labor-data",
+  "bls_ep_occupation": "https://www.bls.gov/emp/ind-occ-matrix/occupation.xlsx",
+  "cip_soc": "https://nces.ed.gov/ipeds/cipcode/Files/CIP2020_SOC2018_Crosswalk.xlsx"
+ }
+}

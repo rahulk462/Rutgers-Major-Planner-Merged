@@ -1,0 +1,11 @@
+<div class="rmp-bar" role="banner">
+  <div class="rmp-row">
+    <a class="rmp-brand" href="{{ url_for('home') }}"><span class="rmp-mark">R</span>Rutgers Major Planner</a>
+    <nav class="rmp-links" aria-label="Site">
+      {% for key, label, href, step in nav_items %}
+      <a href="{{ href }}"{% if key == active %} aria-current="page"{% endif %}>{% if step %}<span class="rmp-step">{{ step }}</span>{% endif %}{{ label }}</a>
+      {% endfor %}
+    </nav>
+    <span class="rmp-note">Rutgers–New Brunswick · runs on your computer</span>
+  </div>
+</div>
