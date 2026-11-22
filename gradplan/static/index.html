@@ -558,7 +558,7 @@ function renderRecord() {
       ${t.map(c => `<tr><td><b>${esc(c.code)}</b></td><td>${esc(c.title)}</td><td>${esc(c.term)}</td><td>${esc(lbl[c.status] || c.status)}</td><td class="num">${fmt(c.credits)}</td></tr>`).join('')}
       </tbody></table></div>` : '<div class="empty">No courses found. Check the transcript paths in the config.</div>'}
     <p class="hint" style="margin-top:10px">${RMP && S.config === 'my-record'
-      ? `This record comes from the <a href="${esc(RMP.links.whatif)}">What-if majors</a> page. Load your audit or add AP, transfer and test credit there, then reload this page.`
+      ? `This record comes from <a href="${esc(RMP.links.home)}#record">Your classes on the home page</a>. Sign in with Rutgers or add classes, AP, transfer and test credit there, then reload this page.`
       : `To add AP, transfer or in-progress courses, edit <code>student.extra_courses</code> in ${esc(S.config_path)} and reload this page.`}</p>`;
 }
 

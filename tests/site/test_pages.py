@@ -67,6 +67,13 @@ def test_tool_pages_load_the_backend_switch(site):
         assert "/Repo-Name/static/backend.js?v=" in html
 
 
+def test_home_page_has_the_switch_and_class_entry(site):
+    html = (site / "index.html").read_text()
+    assert 'data-api="/Repo-Name/whatif"' in html and 'data-static="true"' in html
+    assert "/Repo-Name/static/backend.js?v=" in html and "/Repo-Name/static/home.js?v=" in html
+    assert (site / "static/home.js").exists() and (site / "static/home.css").exists()
+
+
 def test_compare_page_renders_in_the_browser(site):
     html = (site / "outcomes/compare/index.html").read_text()
     assert 'id="static-compare"' in html and "compare.js?v=" in html
@@ -95,6 +102,7 @@ out = {
   "status": call("GET", "whatif", "/api/status", "", None),
   "import": call("POST", "whatif", "/api/run/import", "", json.dumps({"csv": csv})),
   "login": call("POST", "whatif", "/api/run/login", "", "{}"),
+  "add": call("POST", "whatif", "/api/courses/add", "", json.dumps({"code": "01:198:205", "term": "Fall 2025", "grade": "B+", "transfer": False})),
   "after": call("GET", "whatif", "/api/status", "", None),
   "whatif": call("GET", "whatif", "/api/whatif", "programs=cs-bs", None),
   "setup": call("GET", "plan", "/api/setup", "", None),
@@ -114,6 +122,7 @@ print(json.dumps({k: {"status": v["status"], "keys": sorted(v["body"])[:40] if i
     assert out["import"]["status"] == 202
     assert out["after"]["job"]["state"] == "done" and out["after"]["audit"]["courses"] == 12
     assert out["login"]["status"] == 409 and "python run.py --pages" in out["login"]["error"]
+    assert out["add"]["status"] == 200, out["add"]
     assert out["whatif"]["status"] == 200
     assert out["setup"]["status"] == 200, out["setup"]
     assert out["plan"]["status"] == 200, out["plan"]

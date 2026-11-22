@@ -1,0 +1,57 @@
+/* Home page: "Your classes" (Rutgers login + manual class entry), shared by What-if and the planner. */
+.record [hidden] { display: none !important; }
+.record { background: var(--surface); }
+.record-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; }
+.record-head h2 { margin: 0; }
+.record-summary { margin: 0; color: var(--text-secondary); font-size: .95rem; }
+.record-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin: 16px 0 8px; }
+.rec-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px;
+  display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.rec-card h3 { margin: 0; font-size: 1.05rem; display: flex; align-items: center; gap: 8px; }
+.rec-card .hint { margin: 0; }
+.rec-n { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%;
+  background: var(--accent); color: #fff; font-size: .8rem; font-weight: 700; flex: none; }
+.rec-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.rec-status { margin: 0; font-size: .875rem; color: var(--text-muted); min-height: 1.2em; }
+.rec-status:empty { min-height: 0; }
+.rec-status.good, .rec-note.good { color: #1f7a3a; }
+.rec-status.warn { color: var(--warn-text); }
+.rec-status.bad, .rec-note.bad { color: #b42318; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .rec-status.good { color: #5cc27c; }
+  :root:not([data-theme="light"]) .rec-status.bad, :root:not([data-theme="light"]) .rec-note.bad { color: #ff7b72; }
+}
+.rec-note { margin: 0; font-size: .875rem; padding: 8px 10px; border-radius: 8px; background: var(--warn-bg); }
+.rec-note.bad { color: var(--warn-text); }
+.rec-step { border-top: 1px solid var(--border); padding-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.record button.button:disabled { opacity: .5; cursor: default; }
+.record .button { padding: 7px 14px; font-size: .95rem; }
+
+.job { border: 1px solid var(--accent); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; background: var(--surface); }
+.job-title { margin: 0; font-size: .95rem; }
+.callout { display: flex; flex-direction: column; gap: 4px; font-size: .875rem; color: var(--text-secondary); }
+.callout strong { color: var(--text-primary); }
+.waitbox { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.waitbox p { margin: 0; font-size: .9rem; }
+.job-log summary { cursor: pointer; font-size: .85rem; color: var(--text-secondary); }
+.job-log pre { margin: 6px 0 0; max-height: 180px; overflow: auto; font: 12px/1.4 ui-monospace, Menlo, monospace;
+  white-space: pre-wrap; background: var(--surface-2); border-radius: 6px; padding: 8px; }
+
+.add-form, .ap-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; }
+.fld { display: flex; flex-direction: column; gap: 3px; font-size: .8rem; color: var(--text-secondary); min-width: 0; }
+.fld-code { flex: 1 1 200px; }
+.fld-wide { flex: 1 1 200px; }
+.fld-cr input { width: 5.5em; }
+.record input, .record select, .record textarea { font: inherit; font-size: .95rem; color: var(--text-primary);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 6px 8px; max-width: 100%; }
+.record textarea { width: 100%; font: 12.5px/1.4 ui-monospace, Menlo, monospace; margin: 6px 0; }
+.csv summary { cursor: pointer; font-size: .9rem; color: var(--text-secondary); }
+.csv[open] { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.csv .hint { margin: 4px 0 0; }
+
+.mine { margin-top: 8px; }
+.mine > summary { cursor: pointer; font-weight: 600; margin-bottom: 6px; }
+.mine .data-table td { vertical-align: middle; }
+.code-chip { font: 12.5px/1.6 ui-monospace, Menlo, monospace; background: var(--surface-2); border-radius: 5px; padding: 0 6px; margin-right: 6px; }
+.link-btn { font: inherit; font-size: .85rem; background: none; border: 0; color: var(--accent); cursor: pointer; padding: 0; text-decoration: underline; }
+.record-next { margin: 10px 0 0; }

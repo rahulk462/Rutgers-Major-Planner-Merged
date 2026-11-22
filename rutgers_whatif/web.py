@@ -12,6 +12,7 @@ from __future__ import annotations
 import contextlib
 import io
 import json
+import re
 import threading
 import traceback
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -116,6 +117,8 @@ def status() -> dict:
         a = json.loads(config.AUDIT_JSON.read_text())
         audit = {"fetched_at": a.get("fetched_at"), "source": a.get("source"),
                  "courses": len(a.get("courses", [])), "requirements": len(a.get("requirements", []))}
+    from .storage import load_manual
+    manual = load_manual()
     pages = json.loads(config.PAGES_FILE.read_text()) if config.PAGES_FILE.exists() else None
     return {
         "session_saved": config.AUTH_FILE.exists(),
@@ -123,6 +126,7 @@ def status() -> dict:
                                                   "json": len(pages.get("json_endpoints", [])),
                                                   "html": len(pages.get("documents", []))},
         "audit": audit,
+        "manual": {"courses": len(manual), "transfer": sum(1 for c in manual if c.transfer)},
         "soc_terms": cached,
         "soc_courses": len(soc.load_index()) if cached else 0,
         "soc_bundled": 0 if cached else len(soc.bundled_index()),
@@ -139,7 +143,10 @@ def run_whatif(programs: list[str], current: list[str]) -> dict:
     progs = load_programs()
     ids = [p for p in programs if p in progs] or list(progs)
     cur = [c for c in current if c in progs]
-    courses = storage.load_courses()
+    try:
+        courses = storage.load_courses()
+    except FileNotFoundError:
+        courses = []        # nothing entered yet: compare as if you haven't taken anything
     report = whatif.compare(progs, ids, courses, soc.load_index(), current=cur)
     report["courses"] = [c.to_dict() for c in courses]
     return report
@@ -239,6 +246,41 @@ def handle_get(path: str, query: str = "") -> tuple[int, object]:
     return 404, {"error": "not found"}
 
 
+def add_course(body: dict):
+    """Add one course by hand: AP/transfer credit (the default) or a class you took at Rutgers.
+
+    ``{"code", "term", "credits", "title", "grade", "transfer"}``. Without ``"transfer": false``
+    it is AP / test / transfer credit (grade T). With it, ``term`` is a semester like "Fall 2024"
+    and ``grade`` a letter grade, P, W..., or empty for a class you are taking now.
+    """
+    from . import soc, storage
+    from .courses import normalize_code, normalize_term
+
+    cr = body.get("credits")
+    credits = float(cr) if cr not in (None, "") else None
+    if credits is not None and not 0 <= credits <= 12:
+        raise ValueError("credits must be between 0 and 12")
+    title = str(body.get("title") or "")
+    transfer = body.get("transfer", True) is not False
+    if transfer:
+        return storage.add_manual(str(body.get("code", "")), grade=str(body.get("grade") or "T"),
+                                  credits=credits, term=str(body.get("term") or "AP"), title=title)
+    term = normalize_term(str(body.get("term") or ""))
+    if not term:
+        raise ValueError("pick the semester you took it, like Fall 2024")
+    grade = str(body.get("grade") or "").strip().upper()
+    if grade and not GRADE_OK.match(grade):
+        raise ValueError(f"{grade!r} isn't a Rutgers grade (A, B+, B, C+, C, D, F, P, W, or empty if you're taking it now)")
+    known = soc.load_index().get(normalize_code(str(body.get("code", ""))) or "") or {}
+    if credits is None and known.get("credits"):
+        credits = float(known["credits"])
+    return storage.add_manual(str(body.get("code", "")), grade=grade, credits=credits, term=term,
+                              title=title or known.get("title", ""), transfer=False)
+
+
+GRADE_OK = re.compile(r"^(A|B\+|B|C\+|C|D|F|P|PA|S|U|W|NC|INC|IP)$")
+
+
 def handle_post(path: str, body: dict) -> tuple[int, object]:
     """JSON API for POST requests (body already decoded), shared like :func:`handle_get`."""
     if path in ("/api/courses/add", "/api/courses/remove", "/api/courses/add-ap"):
@@ -248,12 +290,10 @@ def handle_post(path: str, body: dict) -> tuple[int, object]:
                 added = storage.add_ap_exam(str(body.get("exam", "")), int(body.get("score") or 0))
                 return 200, {"added": [c.to_dict() for c in added]}
             if path.endswith("add"):
-                cr = body.get("credits")
-                c = storage.add_manual(str(body.get("code", "")), grade=str(body.get("grade") or "T"),
-                                       credits=float(cr) if cr not in (None, "") else None,
-                                       term=str(body.get("term") or "AP"), title=str(body.get("title") or ""))
-                return 200, {"added": c.to_dict()}
-            return 200, {"removed": storage.remove_manual(str(body.get("code", "")))}
+                return 200, {"added": add_course(body).to_dict()}
+            term = body.get("term")
+            return 200, {"removed": storage.remove_manual(str(body.get("code", "")),
+                                                          None if term in (None, "") else str(term))}
         except ValueError as e:
             return 400, {"error": str(e)}
     if path == "/api/done":
