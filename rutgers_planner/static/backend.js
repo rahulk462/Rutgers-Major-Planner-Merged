@@ -27,6 +27,7 @@
   const mode = () => store.get('backend', 'browser');
   const port = () => store.get('port', '5000');
   const localBase = () => `http://127.0.0.1:${port()}/`;
+  window.RMPBackend = { mode, localBase };                   // read by home.js
   const json = (status, body) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
   // ---- Python in the browser -------------------------------------------------------------

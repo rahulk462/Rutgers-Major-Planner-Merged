@@ -98,3 +98,51 @@ def test_rejects_other_hosts_and_origins(client):
     assert client.get("/", headers={"Host": "evil.example"}).status_code == 403
     r = client.post("/whatif/api/run/login", json={}, headers={"Origin": "https://evil.example"})
     assert r.status_code == 403
+
+
+def test_home_has_login_and_class_entry(client):
+    html = client.get("/").data.decode()
+    assert 'id="record"' in html and 'data-api="/whatif"' in html
+    assert 'id="btn-login"' in html and "separate browser window" in html
+    assert 'id="add-form"' in html and 'id="ap-exam"' in html and 'id="csv-text"' in html
+    assert "/static/home.js" in html and "backend.js" not in html      # the switch is only on the Pages copy
+    # The What-if and planner pages send people to the home page for their classes.
+    assert "data-record" in client.get("/whatif/").data.decode()
+    assert "#record" in client.get("/plan/").data.decode()
+
+
+def test_compare_works_before_any_classes_are_entered(client):
+    w = client.get("/whatif/api/whatif?programs=cs-minor")
+    assert w.status_code == 200, w.get_json()
+    assert w.get_json()["programs"][0]["courses_remaining"] > 0
+
+
+def test_self_entered_classes_reach_whatif_and_the_planner(client):
+    add = lambda body: client.post("/whatif/api/courses/add", json=body)  # noqa: E731
+    r = add({"code": "01:198:111", "term": "Fall 2024", "grade": "A", "transfer": False})
+    assert r.status_code == 200, r.get_json()
+    c = r.get_json()["added"]
+    assert c["transfer"] is False and c["grade"] == "A" and c["status"] == "passed"
+    assert c["credits"] == 4 and c["title"]                     # filled in from the course data
+    r = add({"code": "198:112", "term": "2025 spring", "grade": "", "transfer": False})
+    assert r.get_json()["added"]["term"] == "Spring 2025" and r.get_json()["added"]["status"] == "in_progress"
+    assert add({"code": "01:198:205", "term": "", "transfer": False}).status_code == 400   # needs a semester
+    assert add({"code": "01:198:205", "term": "Fall 2025", "grade": "Q", "transfer": False}).status_code == 400
+    assert add({"code": "nope", "term": "Fall 2025", "transfer": False}).status_code == 400
+    add({"code": "01:640:151", "term": "AP", "credits": 4})     # AP credit still works the old way
+
+    s = client.get("/whatif/api/status").get_json()
+    assert s["manual"] == {"courses": 3, "transfer": 1}
+    rows = {c["code"]: c for c in client.get("/whatif/api/courses").get_json()["courses"]}
+    assert set(rows) == {"01:198:111", "01:198:112", "01:640:151"}
+    w = client.get("/whatif/api/whatif?programs=cs-minor").get_json()
+    assert w["courses_considered"] >= 2
+
+    taken = {t["code"]: t for t in client.get("/plan/api/setup?config=my-record").get_json()["student"]["taken"]}
+    assert {"01:198:111", "01:198:112", "01:640:151"} <= set(taken)
+
+    # Remove one semester's entry without touching the rest.
+    add({"code": "01:198:111", "term": "Spring 2024", "grade": "F", "transfer": False})
+    r = client.post("/whatif/api/courses/remove", json={"code": "01:198:111", "term": "Spring 2024"})
+    assert r.get_json()["removed"] == 1
+    assert any(c["code"] == "01:198:111" for c in client.get("/whatif/api/courses").get_json()["courses"])

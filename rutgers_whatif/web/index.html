@@ -91,21 +91,27 @@ td a + a { margin-left: 8px; }
     <div id="log"></div>
   </section>
   <div class="steps">
-  <section>
+  <section id="record-link" hidden>
+    <h2><span class="n">✓</span>Your classes</h2>
+    <p class="hint" id="record-text"></p>
+    <div class="row"><a id="record-href" href="#">Sign in or add classes on the home page</a></div>
+  </section>
+
+  <section data-record>
     <h2><span class="n">1</span>Log in</h2>
     <p class="hint">Opens a <strong>separate</strong> browser window at Degree Navigator. Sign in with your NetID and Duo <strong>in that window</strong> (not in your own browser tab), then click “I'm done” here.</p>
     <div class="row"><button class="primary" data-run="login">Log in</button><button data-run="check">Check session</button></div>
     <div class="status" id="st-session"></div>
   </section>
 
-  <section>
+  <section data-record>
     <h2><span class="n">2</span>Discover</h2>
     <p class="hint">Opens Degree Navigator with your session. Click through your audit and course history, then click “I'm done”. This finds out whether the data is JSON or HTML.</p>
     <div class="row"><button class="primary" data-run="discover">Start discovery</button></div>
     <div class="status" id="st-discover"></div>
   </section>
 
-  <section>
+  <section data-record>
     <h2><span class="n">3</span>Get your audit</h2>
     <p class="hint">Re-fetches the pages you visited, 1–2 s apart.</p>
     <div class="row"><button class="primary" data-run="scrape">Scrape</button><button data-run="reparse">Re-parse saved pages</button></div>
@@ -119,7 +125,7 @@ td a + a { margin-left: 8px; }
     </details>
   </section>
 
-  <section id="mine">
+  <section id="mine" data-record>
     <h2><span class="n">+</span>Your courses &amp; AP credit</h2>
     <p class="hint">AP, test and transfer credit counts as completed. If yours is missing, add it here. It stays put when you re-scrape.</p>
     <div style="font-size:13px;font-weight:600;margin-bottom:4px">Add an AP exam</div>
@@ -233,6 +239,7 @@ async function refresh() {
   let s;
   try { s = await api("/api/status"); } catch (e) { setStatus("#st-session", "Server not reachable: " + e.message, "bad"); return; }
   drawPrograms(s.programs);
+  drawRecordLink(s);
   setStatus("#st-session", s.session_saved ? "Session saved (auth.json)." : "Not logged in yet.", s.session_saved ? "good" : "warn");
   setStatus("#st-discover", s.discovered ? `Mode: ${s.discovered.mode.toUpperCase()}. ${s.discovered.json} JSON endpoints, ${s.discovered.html} HTML pages.` : "Not run yet.", s.discovered ? "good" : "");
   setStatus("#st-audit", s.audit ? `${s.audit.courses} courses, ${s.audit.requirements} requirement rows (${s.audit.source}, ${new Date(s.audit.fetched_at).toLocaleString()}).` : "No audit yet.", s.audit ? "good" : "");
@@ -240,6 +247,21 @@ async function refresh() {
     : s.soc_bundled ? `Nothing downloaded yet. Using the ${s.soc_bundled} courses bundled with the planner (Spring 2023 – Spring 2027).` : "Nothing downloaded yet.",
     s.soc_terms.length || s.soc_bundled ? "good" : "");
   drawJob(s.job);
+}
+
+// In the merged site you sign in and enter classes on the home page; this page just shows the count.
+if (RMP) {
+  document.querySelectorAll("[data-record]").forEach(s => s.hidden = true);
+  $("#record-link").hidden = false;
+  $("#record-href").href = RMP.links.home + "#record";
+}
+function drawRecordLink(s) {
+  if (!RMP) return;
+  const n = (s.audit ? s.audit.courses : 0) + (s.manual ? s.manual.courses : 0);
+  $("#record-text").textContent = n
+    ? `${n} classes on record${s.manual && s.manual.courses ? ` (${s.manual.courses} added by you)` : ""}. Compare uses all of them.`
+    : "No classes yet. Sign in with Rutgers or type your classes in on the home page; until then Compare assumes you haven't taken anything.";
+  $("#record-href").textContent = n ? "Change your classes on the home page" : "Sign in or add classes on the home page";
 }
 
 const WINDOW_TEXT = {

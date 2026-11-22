@@ -1,9 +1,122 @@
 {% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+{% if static_site %}
+<link rel="stylesheet" href="{{ url_for('static', filename='backend.css') }}">
+<script src="{{ url_for('static', filename='backend.js') }}"></script>
+{% endif %}
+{% endblock %}
 {% block content %}
 <section class="home-hero">
   <h1>Pick a major, see where you stand, and plan the way to graduation.</h1>
-  <p class="lede">Three Rutgers–New Brunswick tools in one place. They share your course record, the
-    same program definitions and the same course data, so each step picks up where the last one left off.</p>
+  <p class="lede">Three Rutgers–New Brunswick tools in one place. Add your classes once, here, and the
+    what-if comparison and the graduation planner both use them.</p>
+</section>
+
+<section class="panel record" id="record" data-api="{{ url_for('whatif.page').rstrip('/') }}"
+         data-static="{{ 'true' if static_site else 'false' }}" aria-labelledby="record-title">
+  <div class="record-head">
+    <h2 id="record-title">Your classes</h2>
+    <p class="record-summary" id="rec-summary" aria-live="polite">
+      {% if record.courses %}{{ record.courses }} courses on record{% if record.manual %} ({{ record.manual }} added by you){% endif %}{% if record.when %}, from {{ record.source }} on {{ record.when }}{% endif %}.
+      {% else %}No classes yet. Sign in with Rutgers or type them in below. You can use every page without signing in.{% endif %}
+    </p>
+  </div>
+
+  <div class="record-grid">
+    <article class="rec-card" id="login-card">
+      <h3><span class="rec-n">A</span>Sign in with Rutgers</h3>
+      <p class="hint">Opens the Rutgers login (NetID + Duo) in a <strong>separate browser window</strong>. Sign in
+        there, then come back to this tab and click “I'm done”. This site never sees your password; it keeps
+        the session on your computer to read your Degree Navigator audit.</p>
+      <p class="rec-note bad" id="login-unavailable" hidden></p>
+      <div class="rec-row">
+        <button class="button" type="button" id="btn-login">Log in to Rutgers</button>
+        <button class="button secondary" type="button" id="btn-check">Check session</button>
+      </div>
+      <p class="rec-status" id="st-login"></p>
+
+      <div class="rec-step" id="pull-step">
+        <p class="hint" id="pull-hint">Once you're signed in, load your classes from Degree Navigator.</p>
+        <div class="rec-row">
+          <button class="button" type="button" id="btn-pull">Load my classes</button>
+          <button class="button secondary" type="button" id="btn-rediscover" hidden>Find my audit pages again</button>
+        </div>
+        <p class="rec-status" id="st-pull"></p>
+      </div>
+
+      <div class="job" id="job" hidden>
+        <p class="job-title"><strong id="job-title"></strong> <span id="job-state"></span></p>
+        <div class="callout" id="winhelp" hidden>
+          <strong>A separate browser window just opened. Use that window.</strong>
+          <span>It has its own Dock / taskbar icon (“Google Chrome for Testing”, “Chromium”, or your Chrome). If you
+            don't see it, it may be behind this one: press ⌘-Tab or Alt-Tab.</span>
+          <span>Signing in to Rutgers in a normal tab, like this one, doesn't count.</span>
+        </div>
+        <div class="waitbox" id="waitbox" hidden>
+          <p class="rec-status" id="winstate"></p>
+          <p id="prompt"></p>
+          <button class="button" type="button" id="btn-done">I'm done</button>
+        </div>
+        <details class="job-log"><summary>Details</summary><pre id="log"></pre></details>
+      </div>
+    </article>
+
+    <article class="rec-card" id="manual-card">
+      <h3><span class="rec-n">B</span>Or enter your classes yourself</h3>
+      <p class="hint">No login needed. Add each class you've taken or are taking, plus AP and transfer credit.</p>
+      <form class="add-form" id="add-form" autocomplete="off">
+        <label class="fld fld-code"><span>Course</span>
+          <input id="f-code" name="code" placeholder="01:198:111 or “intro computer”" list="f-code-list" required>
+          <datalist id="f-code-list"></datalist>
+        </label>
+        <label class="fld"><span>When</span><select id="f-term" name="term"></select></label>
+        <label class="fld"><span>Grade</span>
+          <select id="f-grade" name="grade">
+            <option value="">Taking it now</option>
+            <option>A</option><option>B+</option><option>B</option><option>C+</option><option>C</option>
+            <option>D</option><option>F</option><option>P</option><option>W</option>
+          </select>
+        </label>
+        <label class="fld fld-cr"><span>Credits</span>
+          <input id="f-credits" name="credits" type="number" min="0" max="12" step="0.5" placeholder="auto">
+        </label>
+        <button class="button" type="submit">Add</button>
+      </form>
+      <p class="rec-status" id="f-title"></p>
+
+      <div class="ap-row">
+        <label class="fld fld-wide"><span>AP exam</span><select id="ap-exam"></select></label>
+        <label class="fld"><span>Score</span>
+          <select id="ap-score"><option value="5">5</option><option value="4">4</option><option value="3">3 or lower</option></select>
+        </label>
+        <button class="button secondary" type="button" id="btn-ap">Add AP credit</button>
+      </div>
+      <p class="rec-status" id="ap-preview"></p>
+
+      <details class="csv">
+        <summary>Paste or upload a list of classes (CSV)</summary>
+        <p class="hint">Columns: <code>code,title,credits,grade,term</code>. This replaces any classes loaded from
+          Degree Navigator; classes you added one by one stay.</p>
+        <input type="file" id="csv-file" accept=".csv,text/csv">
+        <textarea id="csv-text" rows="4" placeholder="code,title,credits,grade,term&#10;01:198:111,Intro CS,4,A,Fall 2024"></textarea>
+        <button class="button secondary" type="button" id="btn-csv">Import list</button>
+      </details>
+      <p class="rec-status" id="st-manual" aria-live="polite"></p>
+    </article>
+  </div>
+
+  <details class="mine" id="mine" open>
+    <summary id="mine-sum">Your classes</summary>
+    <div class="table-scroll">
+      <table class="data-table compact">
+        <thead><tr><th>Course</th><th>When</th><th>Grade</th><th class="num">Credits</th><th>From</th><th></th></tr></thead>
+        <tbody id="mine-body"><tr><td colspan="6" class="muted">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </details>
+  <p class="hint record-next">Next: <a href="{{ url_for('whatif.page') }}">compare majors with these classes</a>
+    or <a href="{{ url_for('planner.page') }}">plan the rest of your degree</a>. Both read this record.</p>
 </section>
 
 <section class="steps-grid" aria-label="Tools">
@@ -15,17 +128,14 @@
   </article>
   <article class="step-card">
     <h2><span class="step-n">2</span>What-if majors</h2>
-    <p>Load your Degree Navigator audit (or a course CSV), add AP and transfer credit, and see how far you are from each major and minor if you switch or add one.</p>
-    <div class="status">
-      {% if record.courses %}<span class="ok">✓</span> {{ record.courses }} courses on record{% if record.manual %} ({{ record.manual }} added by you){% endif %}{% if record.when %}, from {{ record.source }} on {{ record.when }}{% endif %}.
-      {% else %}No record yet. Start here, or try the planner with the sample transcript.{% endif %}
-    </div>
+    <p>See how far your classes get you in each major and minor if you switch or add one, and look up any course's prerequisites.</p>
+    <div class="status">Uses the classes above.</div>
     <a class="button" href="{{ url_for('whatif.page') }}">Compare programs</a>
   </article>
   <article class="step-card">
     <h2><span class="step-n">3</span>Graduation plan</h2>
     <p>A term-by-term plan to graduation that respects prerequisites, when courses actually run and your credit limits, with the critical path and what-if scenarios.</p>
-    <div class="status">Reads the record from step 2 (config <code>my-record</code>). {{ 'Optimizer: OR-Tools CP-SAT.' if cpsat else 'OR-Tools not installed: greedy planner.' }}</div>
+    <div class="status">Uses the classes above (config <code>my-record</code>). {{ 'Optimizer: OR-Tools CP-SAT.' if cpsat else 'OR-Tools not installed: greedy planner.' }}</div>
     <a class="button" href="{{ url_for('planner.page') }}">Build a plan</a>
   </article>
 </section>
@@ -58,4 +168,7 @@
   <p class="footnote">Program requirements are condensed from the department pages (sources in each program file).
     Minors share their field's earnings, which describe graduates who majored in it.</p>
 </section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='home.js') }}"></script>
 {% endblock %}

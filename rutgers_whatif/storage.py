@@ -77,7 +77,7 @@ def add_manual(code: str, grade: str = "T", credits: float | None = None, title:
     norm = normalize_code(code)
     if not norm:
         raise ValueError(f"{code!r} isn't a course code like 01:640:151")
-    course = TakenCourse(code=norm, title=title, credits=credits, grade=grade or "T", term=term,
+    course = TakenCourse(code=norm, title=title, credits=credits, grade=(grade or "T") if transfer else (grade or ""), term=term,
                          source="manual", transfer=transfer)
     rest = [c for c in load_manual() if not (c.code == norm and c.term == term)]
     _write_manual(rest + [course])
@@ -103,12 +103,13 @@ def add_ap_exam(exam: str, score: int) -> list[TakenCourse]:
     return [add_manual(code, grade="T", credits=each, term=f"AP {match['exam']} ({score})") for code in awards]
 
 
-def remove_manual(code: str) -> int:
+def remove_manual(code: str, term: str | None = None) -> int:
+    """Remove courses you added by hand: every entry for ``code``, or only the one from ``term``."""
     from .courses import normalize_code
 
     norm = normalize_code(code) or code
     before = load_manual()
-    after = [c for c in before if c.code != norm]
+    after = [c for c in before if not (c.code == norm and (term is None or c.term == term))]
     _write_manual(after)
     return len(before) - len(after)
 

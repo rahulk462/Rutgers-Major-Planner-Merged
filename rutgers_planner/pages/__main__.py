@@ -81,12 +81,12 @@ def build(out: Path, base: str, pyodide: Path | None) -> dict:
 
     zip_bytes = app_zip()
     version = hashlib.sha256(zip_bytes + b"".join(
-        (REPO / "rutgers_planner/static" / f).read_bytes() for f in ("backend.js", "pyworker.js", "compare.js"))).hexdigest()[:10]
+        (REPO / "rutgers_planner/static" / f).read_bytes() for f in ("backend.js", "pyworker.js", "compare.js", "home.js", "home.css"))).hexdigest()[:10]
 
     # Links to /outcomes/... pages get their trailing slash so GitHub Pages doesn't redirect.
     b = re.escape(base)
     slash = re.compile(rf"(?<=[\"'])({b}outcomes/(?:compare|sources|major/[^\"'?#/<>\s]+))(?=[?#\"'])")
-    versioned = re.compile(rf"({b}static/(?:backend\.js|compare\.js))(?=[\"'])")
+    versioned = re.compile(rf"({b}static/(?:backend\.js|compare\.js|home\.js|home\.css))(?=[\"'])")
 
     urls = ["/", "/outcomes/", "/outcomes/compare", "/outcomes/sources", "/whatif/", "/plan/"]
     urls += [f"/outcomes/major/{m['cip4']}" for m in majors]

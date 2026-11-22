@@ -11,9 +11,9 @@ that used to be separate projects:
 
 ## How the pieces fit together
 
-* **One record.** The What-If page saves your courses to `personal/data/` (git-ignored). The planner's
-  `my-record` config reads the same files, so a scraped audit, an imported CSV, or AP credit you add
-  on the What-If page shows up in the planner on reload.
+* **One record.** The home page's *Your classes* panel saves your courses to `personal/data/` (git-ignored). The planner's
+  `my-record` config reads the same files, so a scraped audit, an imported CSV, or classes and AP credit you add
+  on the home page show up in the planner on reload.
 * **One program list.** Both tools use the same program ids (`cs-bs`, `math-minor`, `ds-bs-cs`, ...).
   `rutgers_planner/programs.py` joins them and maps each to its federal CIP code in the outcomes data
   (CS → 11.01, Math → 27.01, Statistics → 27.05, Data Science → 30.70).
@@ -76,13 +76,21 @@ yourself with `python -m rutgers_planner.pages --out _site --fetch-pyodide --bas
 `_site/` with any static server. The build packs only git-tracked files and renders with an empty
 record, so nothing in `personal/` is ever published.
 
-### Getting your record in
+### Getting your classes in
 
-On **What-if majors**: *Log in* opens a separate browser window where you sign in with NetID + Duo
-yourself (the tool never types your password), *Discover* records how Degree Navigator delivers your
-audit, and *Scrape* pulls it, 1–2 s between requests. Or skip all that and paste a course CSV
-(`code,title,credits,grade,term`), or try `examples/sample_courses.csv`. See
-[the What-If notes](#what-if-tool-details) for the ground rules.
+Everything happens in **Your classes** on the home page, and What-if and the planner both read it:
+
+* **A. Sign in with Rutgers** (local server or "My computer" only). *Log in to Rutgers* opens the
+  Rutgers login (NetID + Duo) in a separate browser window; you sign in there yourself (the tool never
+  sees your password) and click *I'm done*. *Load my classes* then pulls your Degree Navigator audit:
+  the first time, click through your audit pages in that window so the tool learns where they are;
+  after that it just re-fetches them, 1–2 s apart.
+* **B. Enter classes yourself**, no login needed: pick a course (code or name), the semester and your
+  grade (or "Taking it now"), add AP exams by score, or paste a CSV (`code,title,credits,grade,term`,
+  e.g. `examples/sample_courses.csv`). On GitHub Pages in "This browser" mode they are saved in your
+  browser.
+
+See [the What-If notes](#what-if-tool-details) for the ground rules.
 
 ## Command line
 
